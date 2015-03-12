@@ -1,4 +1,4 @@
-# Fastcgi-Container
+# Fastcgi Container
 Fastcgi Container is a framework for development of high performance FastCGI applications in C++.
 
 Fastcgi Container is branch of Yandex <a href="https://github.com/golubtsov/Fastcgi-Daemon">Fastcgi Daemon</a>.
