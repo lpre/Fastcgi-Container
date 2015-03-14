@@ -14,7 +14,7 @@ What's new compared to Fastcgi Daemon:
 
 # Requirements
 
-* A C++11 compliant compiler with complete support of C++11 regex (e.g., GCC 4.9 meets the minimum feature set required to build and use MNMLSTC Core)
+* A C++11 compliant compiler with complete support of C++11 regex (e.g., GCC 4.9 meets the minimum feature set required to build the package)
 * GNU build system (Autotools)
 * Currently the framework can be built on Linux only
 
