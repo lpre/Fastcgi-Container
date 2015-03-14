@@ -1,0 +1,149 @@
+<%@ page class="LoginForm" %>
+<%@ component name="login" %>
+<%@ impl sinclude="string"
+         sinclude="chrono"
+%>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=5">
+
+	<title>Login</title>
+	<style>
+		body {
+			background-color: white;
+		}
+		
+		td {
+			font-family: Tahoma, Arial, Helvetica, sans-serif;
+			font-size: 10pt;
+			color: WindowText;
+			padding: 3px 5px 3px 5px;
+		}
+		
+		.content {
+			border: 1px solid ActiveCaption; 
+			border-collapse: collapse;
+			background-color: Window;
+		}
+		
+		.content th {
+			background-color: ActiveCaption;
+			font-family: Tahoma, Arial, Helvetica, sans-serif;
+			color: CaptionText;
+			font-size: 10pt;
+			font-weight:normal;
+			text-align: left;
+			padding: 1px 10px 1px 10px;
+		}
+		
+		.form td {
+			font-weight: bold;
+			padding: 10px;
+		}
+		
+		.form .input {
+			border: 1px solid ActiveCaption; 
+			width: 230px;
+			font: menu;
+			padding-left: 3px;
+		}
+		
+		.form .button {
+			width: 100px;
+			font: menu;
+		}
+		
+		.content .warning {
+			color: red; 
+			font-size: 12pt; 
+			font-weight: bold;
+			text-align: center;
+		}
+		
+		.warningContent {
+			text-align: left;
+		}
+		
+		.loginWarningContent {
+			font-size: 10pt; 
+			font-weight: bold;
+			text-align: center;
+			padding-top: 10px;
+			padding-bottom: 10px;
+		}
+		
+		.footnote {
+			padding-top: 10px;
+			text-align: center;
+		}
+		
+		.footnote a {
+			font-family: Tahoma, Arial, Helvetica, sans-serif;
+			font-size: 10px;
+			color: GrayText;
+			text-decoration: none;
+		}
+	</style>
+	<script>
+		function setFocus(){
+			document.forms[0].elements["j_username"].focus(); 
+		}
+	</script>
+</head>
+
+<body leftMargin=0 rightMargin=0 topMargin=0 marginheight="0" marginwidth="0" onLoad="setFocus()">
+	<form action="j_security_check" method="POST" autocomplete="off">
+		<table id=extTab border=0 cellspacing=0 cellpadding=0 align=center width=100% height=100%>
+			<tr><td>
+				<table id=contentTab class=content align=center border=0>
+					<thead>
+						<th>Login</th>
+					</thead>
+
+					<tr>
+						<td class=loginWarningContent width=400>
+							<span style="font-size: 11pt;">This is login to example project</span><p>
+						</td>
+					</tr>
+					
+					<tr><td>
+						<table id=formTab class=form cellpadding="10" align="center">
+							<tr>
+								<td>USERNAME:</td>
+								<td><input class=input type="text" autocomplete="off" name="j_username" size="20" maxlength="20"></td>
+							</tr>
+							<tr>
+								<td>PASSWORD:</td>
+								<td><input class=input type="password" autocomplete="off" name="j_password" size="20" maxlength="20"></td>
+							</tr>
+							<tr>
+								<td colspan=2 align="right"><input class=button type="submit" value="Login"></td>
+							</tr>
+						</table>
+					</td></tr>
+					
+					<tr>
+						<td class=warning>
+							Warning!
+						</td>
+					</tr>
+					<tr>
+						<td class=warningContent width=400>
+							Unauthorized access to this system is forbidden and will be
+							prosecuted by law! By accessing this system, you agree that your
+							actions can be monitored if unauthorized usage is suspected.
+						</td>
+					</tr>
+					
+					<tr>
+						<td class=footnote>
+							<a href="https://github.com/lpre/Fastcgi-Container">FastCGI Container</a>
+						</td>
+					</tr>
+					
+				</table>
+			</td></tr>
+		</table>
+	</form>
+</body>
+</html>
