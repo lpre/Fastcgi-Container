@@ -80,8 +80,8 @@ done
 
 LIBS=$stored_libs
 
-AC_CONFIG_FILES([Makefile include/Makefile include/fastcgi3/Makefile 
-	include/details/Makefile library/Makefile main/Makefile tests/Makefile 
+AC_CONFIG_FILES([Makefile include/Makefile include/fastcgi3/Makefile
+	include/details/Makefile library/Makefile main/Makefile
 	example/Makefile syslog/Makefile request-cache/Makefile statistics/Makefile
 	file-logger/Makefile session-manager/Makefile authenticator/Makefile page-compiler/Makefile])
 
