@@ -3,9 +3,9 @@ AUTOMAKE_OPTIONS = 1.9 foreign
 
 SUBDIRS = include library main example syslog request-cache session-manager authenticator statistics file-logger page-compiler
 
-if HAVE_CPPUNIT
-SUBDIRS += tests
-endif
+#if HAVE_CPPUNIT
+#SUBDIRS += tests
+#endif
 
 EXTRA_DIST = autogen.sh config/settings.h.in config/ac_cxx_gnucxx_hashmap.m4 \
 	config/ac_cxx_have_ext_hash_map.m4 config/ac_cxx_namespaces.m4 \
