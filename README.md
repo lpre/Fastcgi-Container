@@ -1,7 +1,7 @@
 # Fastcgi Container
 Fastcgi Container is a framework for development of high performance FastCGI applications in C++.
 
-Fastcgi Container is branch of Yandex's <a href="https://github.com/golubtsov/Fastcgi-Daemon">Fastcgi Daemon</a>.
+Fastcgi Container is a branch of Yandex's <a href="https://github.com/golubtsov/Fastcgi-Daemon">Fastcgi Daemon</a>.
 
 What's new compared to Fastcgi Daemon:
 
@@ -9,7 +9,7 @@ What's new compared to Fastcgi Daemon:
 * Support of request filters
 * Support of servlets as an extensions of request handlers
 * Support of sessions
-* Support of authentication and authoriuation 
+* Support of authentication and authorization 
 * The framework provides Page Compiler - a command-line C++ server page compiler which generates C++ servlets from <a href="http://en.wikipedia.org/wiki/JavaServer_Pages">JSP-like</a> source files 
 
 # Requirements
@@ -37,5 +37,4 @@ What's new compared to Fastcgi Daemon:
 * <a href="page-compiler/docs/page_compiler.md">C++ Page Compiler</a>
 
 # Examples
-
 
