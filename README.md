@@ -38,3 +38,10 @@ What's new compared to Fastcgi Daemon:
 
 # Examples
 
+The following examples are provided:
+
+* Simple request handler
+* Simple request filter
+* Simple servlet
+* Authentication filter
+* Simple athorization realm
