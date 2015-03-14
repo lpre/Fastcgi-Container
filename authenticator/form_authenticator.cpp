@@ -167,7 +167,7 @@ FormAuthenticator::authenticate(fastcgi::Request* request) const {
 		 } else {
 			 // Invalid credentials
 			 std::shared_ptr<fastcgi::Session> session = request->getSession();
-			 if (session && session->hasAttribute(PARAM_NAME_STORED_REQUEST) || session->hasAttribute(PARAM_NAME_STORED_REQUEST_URI)) {
+			 if (session && (session->hasAttribute(PARAM_NAME_STORED_REQUEST) || session->hasAttribute(PARAM_NAME_STORED_REQUEST_URI))) {
 				 // If original request has already been stored,
 				 // redirect to login screen again
 				 request->markAsProcessed();
