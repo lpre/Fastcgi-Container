@@ -41,18 +41,21 @@ RegexFilter::~RegexFilter() {
 
 bool
 RegexFilter::check(const std::string &value) {
-//	return std::regex_match(value, regex_);
+	return std::regex_match(value, regex_);
 
-	std::lock_guard<std::mutex> lock(mutex_);
+	// TODO: regex in C++11 is not very fast. Try to cache the results.
+	// TODO: implement the limit for number of stored results
 
-	auto it = cache_.find(value);
-	if (cache_.end()!=it) {
-		return it->second;
-	} else {
-		bool ret = std::regex_match(value, regex_);
-		cache_.insert({std::string(value), ret});
-		return ret;
-	}
+//	std::lock_guard<std::mutex> lock(mutex_);
+//
+//	auto it = cache_.find(value);
+//	if (cache_.end()!=it) {
+//		return it->second;
+//	} else {
+//		bool ret = std::regex_match(value, regex_);
+//		cache_.insert({std::string(value), ret});
+//		return ret;
+//	}
 }
 
 UrlFilter::UrlFilter(const std::string &regex, const std::string &url_prefix)
