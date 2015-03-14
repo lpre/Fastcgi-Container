@@ -12,6 +12,8 @@ What's new compared to Fastcgi Daemon:
 * Support of authentication and authorization 
 * The framework provides Page Compiler - a command-line C++ server page compiler which generates C++ servlets from <a href="http://en.wikipedia.org/wiki/JavaServer_Pages">JSP-like</a> source files 
 
+Note that all filters (including authentication/authorization filter) are executed under the FastCGI role "RESPONDER" and do not require the FastCGI roles "FILTER" and "AUTHORIZER" are supported by FastCGI connector (e.g. corresponding modules for Apache HTTPD).  
+
 # Requirements
 
 * A C++11 compliant compiler with complete support of C++11 regex (e.g., GCC 4.9 meets the minimum feature set required to build the package)
