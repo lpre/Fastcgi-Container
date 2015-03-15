@@ -96,6 +96,8 @@ If you want to run examples in clustered environment, enable the Apache module `
     	BalancerMember fcgi://localhost:8081
 	</Proxy>
 
+Note that you will need to configure two or more instances of Fastcgi Container either on different hosts or on the same host with different ports.
+
 For more information, see Apache documentation:
  
 * [mod_proxy](http://httpd.apache.org/docs/2.4/mod/mod_proxy.html)
