@@ -55,7 +55,7 @@ The following examples are provided:
 * Simple request handler
 * Simple request filter
 * Simple servlet
-* Authentication filter
+* Form authentication filter
 * Simple athorization realm
 
 ## Build
