@@ -45,7 +45,7 @@ The project is using GNU Autotools. To build it, execute the following commands 
 
 # Docs
 
-* [API](docs/API.md)
+* [API](docs/API.md) (coming soon)
 * [C++ Page Compiler](page-compiler/docs/page_compiler.md)
 
 # Examples
@@ -80,7 +80,7 @@ Copy built example shared libraries from `example/.libs` and `example/page/.libs
 
 Configure available HTTPD server to connect with Fastcgi Container. 
 
-For example, to run examples via Unix socket using Apache modules `mod_poxy` and `mod_proxy_fcgi`, add the following entries into Apache configuration file:
+For example, to run examples via Unix socket with Apache2 HTTPD using modules `mod_poxy` and `mod_proxy_fcgi`, add the following entries into Apache configuration file:
 
 	ProxyPass /myapp/ unix:///var/lib/apache2/fcgid/fastcgi3-example.sock|fcgi://localhost/
  
@@ -113,7 +113,7 @@ Start Fastcgi Container with exmple configuration:
 	cd ~/tmp/fscgi
 	sudo fastcgi3-container --config=./fastcgi.conf
  
-Open any web browser and type the following address URL bar:
+Open any web browser and type the following address in URL bar:
 
 	http://127.0.0.1/myapp/servlet 
 
