@@ -14,7 +14,11 @@ What's new compared to Fastcgi Daemon:
 * Support of security contexts   
 * The framework provides Page Compiler - a command-line C++ server page compiler which generates C++ servlets from [JSP-like](http://en.wikipedia.org/wiki/JavaServer_Pages) source files 
 
-Note that all filters (including authentication/authorization filter) are executed under the FastCGI role "RESPONDER" and do not require that the roles "FILTER" and/or "AUTHORIZER" are supported by FastCGI connector (e.g. corresponding modules for Apache HTTPD).
+All filters (including authentication/authorization filter) are executed under the FastCGI role "RESPONDER" and do not require that the roles "FILTER" and/or "AUTHORIZER" are supported by FastCGI connector (e.g. corresponding modules for Apache HTTPD).
+
+Session manager and security facility (support of authentication and authorization) are implemented as an optional pluggable modules: you may load them to your application and use it, or run the application without these features. 
+
+Note that security facility depends on session management: if you decide to use authentication and authorization, you have to activate the session management as well.  
 
 # License 
 
@@ -57,7 +61,7 @@ The following examples are provided:
 * Simple request handler
 * Simple request filter
 * Simple servlet
-* Form authentication filter
+* Configuration for form authentication filter
 * Simple athorization realm
 
 ## Build
