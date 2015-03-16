@@ -46,7 +46,7 @@ HandlerSet::~HandlerSet() {
 void
 HandlerSet::initInternal(const Config *config, const ComponentSet *componentSet, const std::string &url_prefix, std::vector<std::string> &v) {
 
-    for (auto& k : v) {
+    for (auto &k : v) {
         HandlerDescription handlerDesc;
         handlerDesc.poolName = config->asString(k + "/@pool", defaultPoolName_);
         handlerDesc.id = config->asString(k + "/@id", "");
@@ -78,7 +78,7 @@ HandlerSet::initInternal(const Config *config, const ComponentSet *componentSet,
 
         std::vector<std::string> q;
         config->subKeys(k + "/param", q);
-        for (auto& it : q) {
+        for (auto &it : q) {
             std::string name = config->asString(it + "/@name", "");
             if (name.empty()) {
                 continue;
@@ -92,7 +92,7 @@ HandlerSet::initInternal(const Config *config, const ComponentSet *componentSet,
 
         std::vector<std::string> components;
         config->subKeys(k + "/component", components);
-        for (auto& c : components) {
+        for (auto &c : components) {
             const std::string componentName = config->asString(c + "/@name");
             std::shared_ptr<Component> handlerComponent = componentSet->find(componentName);
             if (!handlerComponent) {
@@ -130,7 +130,7 @@ HandlerSet::init(const Config *config, const ComponentSet *componentSet) {
     // Filters
 	v.clear();
     config->subKeys("/fastcgi/handlers/filter", v);
-    for (auto& k : v) {
+    for (auto &k : v) {
         FilterDescription filterDesc;
         filterDesc.id = config->asString(k + "/@id", "");
 
@@ -176,7 +176,7 @@ HandlerSet::init(const Config *config, const ComponentSet *componentSet) {
 
         std::vector<std::string> components;
         config->subKeys(k + "/component", components);
-        for (auto& c : components) {
+        for (auto &c : components) {
             const std::string componentName = config->asString(c + "/@name");
             std::shared_ptr<Component> handlerComponent = componentSet->find(componentName);
             if (!handlerComponent) {
@@ -200,9 +200,9 @@ HandlerSet::findURIHandler(const Request *request) const {
 
 	// Find the single matching handler
 
-    for (auto& i : handlers_) {
+    for (auto &i : handlers_) {
         bool matched = true;
-        for (auto& f : i.selectors) {
+        for (auto &f : i.selectors) {
             if (f.first == "url" && !f.second->check(request)) {
                 matched = false;
                 break;
@@ -241,9 +241,9 @@ HandlerSet::findURIFilters(const Request *request, std::vector<std::shared_ptr<F
 
 	// Find all matching filters
 
-    for (auto& i : filters_) {
+    for (auto &i : filters_) {
         bool matched = true;
-        for (auto& f : i.selectors) {
+        for (auto &f : i.selectors) {
             if (f.first == "url" && !f.second->check(request)) {
                 matched = false;
                 break;
@@ -282,7 +282,7 @@ HandlerSet::findURIFilters(const Request *request, std::vector<std::shared_ptr<F
 void
 HandlerSet::findPoolHandlers(const std::string &poolName, std::set<std::shared_ptr<Handler>> &handlers) const {
     handlers.clear();
-    for (auto& it : handlers_) {
+    for (auto &it : handlers_) {
         if (it.poolName == poolName) {
             handlers.insert(it.handlers.begin(), it.handlers.end());
         }
@@ -292,7 +292,7 @@ HandlerSet::findPoolHandlers(const std::string &poolName, std::set<std::shared_p
 std::set<std::string>
 HandlerSet::getPoolsNeeded() const {
     std::set<std::string> pools;
-    for (auto& i : handlers_) {
+    for (auto &i : handlers_) {
         pools.insert(i.poolName);
     }
     if (pools.find(defaultPoolName_)==pools.end()) {

@@ -1,18 +1,20 @@
 # Fastcgi Container
-Fastcgi Container is a framework for development of high performance FastCGI applications in C++.
+
+Fastcgi Container is a framework for development of high performance web applications in C++.
 
 Fastcgi Container is a branch of Yandex's [Fastcgi Daemon](<https://github.com/golubtsov/Fastcgi-Daemon).
 
 What's new compared to Fastcgi Daemon:
 
-* The package is written in C++11 and does not use Boost libraries anymore 
+* The package is written in C++11 and does not depends on Boost libraries anymore 
 * Support of request filters
 * Support of servlets as an extensions of request handlers
 * Support of sessions
-* Support of authentication and authorization 
+* Support of authentication and authorization
+* Support of security context   
 * The framework provides Page Compiler - a command-line C++ server page compiler which generates C++ servlets from [JSP-like](http://en.wikipedia.org/wiki/JavaServer_Pages) source files 
 
-Note that all filters (including authentication/authorization filter) are executed under the FastCGI role "RESPONDER" and do not require that the roles "FILTER" and "AUTHORIZER" are supported by FastCGI connector (e.g. corresponding modules for Apache HTTPD).
+Note that all filters (including authentication/authorization filter) are executed under the FastCGI role "RESPONDER" and do not require that the roles "FILTER" and/or "AUTHORIZER" are supported by FastCGI connector (e.g. corresponding modules for Apache HTTPD).
 
 # License 
 
