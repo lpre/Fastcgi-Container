@@ -68,17 +68,9 @@ To re-build them separately, execute the following commands:
 	cd ./example/pages
 	make
 
-To build the example C++ server page, execute the following commands:
-
-	cd ./example/pages
-	fastcgi3-page-compiler -updateFactory=true -updateMakefile=true *.cpsp
-	./autogen.sh
-	./configure
-	make
-
 ## Configuring examples to run with HTTPD server 
 
-Copy built example shared libraries from `example/.libs` and `example/page/.libs` as well as example configuration file `example/fastcgi.conf` into working directory (e.g. `~/tmp/fscgi`). Modify configuration file as appropriate.
+Copy built shared libraries from `example/.libs` as well as configuration file `example/fastcgi.conf` into working directory (e.g. `~/tmp/fscgi`). Modify configuration file as appropriate.
 
 Configure available HTTPD server to connect with Fastcgi Container. 
 
