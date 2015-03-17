@@ -43,8 +43,8 @@ public:
     bool check(const std::string &value);
 protected:
     std::regex regex_;
-	std::unordered_map<std::string, bool> cache_;
-	mutable std::mutex mutex_;
+//	std::unordered_map<std::string, bool> cache_;
+//	mutable std::mutex mutex_;
 };
 
 class UrlFilter : public RegexFilter {

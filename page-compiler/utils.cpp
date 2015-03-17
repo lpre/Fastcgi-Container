@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Fastcgi Container. If not, see <http://www.gnu.org/licenses/>.
 
+#include <iostream>
 #include <string>
 #include <cstring>
 #include <vector>
@@ -23,6 +24,7 @@
 
 #include <sys/stat.h>
 #include <dirent.h>
+#include <system_error>
 
 #include "utils.h"
 
@@ -84,7 +86,13 @@ createDirectories(const std::string& path) {
 	std::string newFolder = "";
 	for (auto& dir : dirs) {
 		newFolder += "/"+dir;
-		mkdir(newFolder.c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
+		if (0!=mkdir(newFolder.c_str(), S_IRUSR | S_IWUSR | S_IXUSR)) {
+			if (EEXIST!=errno) {
+				std::error_condition econd = std::system_category().default_error_condition(errno);
+				std::cerr << "Could not create directory \"" << path << "\": " << econd.message() << std::endl;
+				throw std::system_error(errno, std::system_category());
+			}
+		}
 	}
 }
 

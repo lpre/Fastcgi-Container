@@ -19,6 +19,7 @@
 
 #include "settings.h"
 
+#include <iostream>
 #include <cstdlib>
 #include <stdexcept>
 #include <limits>
@@ -27,6 +28,7 @@
 #include <uuid/uuid.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <system_error>
 
 #include "fastcgi3/util.h"
 #include "fastcgi3/logger.h"
@@ -339,7 +341,13 @@ FileSystemUtils::createDirectories(const std::string& path) {
 	std::string newFolder = "";
 	for (auto& dir : dirs) {
 		newFolder += "/"+dir;
-		mkdir(newFolder.c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
+		if (0!=mkdir(newFolder.c_str(), S_IRUSR | S_IWUSR | S_IXUSR)) {
+			if (EEXIST!=errno) {
+				std::error_condition econd = std::system_category().default_error_condition(errno);
+				std::cerr << "Could not create directory \"" << path << "\": " << econd.message() << std::endl;
+				throw std::system_error(errno, std::system_category());
+			}
+		}
 	}
 }
 

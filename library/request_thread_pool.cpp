@@ -184,8 +184,6 @@ RequestsThreadPool::handleTask(RequestTask task) {
             }
             else {
                 task.request->sendError(500);
-                std::string err(e.what());
-                task.request->write(err.c_str(), err.size());
             }
         }
         catch (...) {

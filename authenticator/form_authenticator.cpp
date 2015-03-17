@@ -65,13 +65,14 @@ FormAuthenticator::FormAuthenticator(std::shared_ptr<fastcgi::ComponentContext> 
 		formAction_.insert(0, "/");
 	}
 
-	cache_dir_ = config->asString(componentXPath + "/cache-dir", "/var/cache/fastcgi-daemon/form-auth-cache/");
+	cache_dir_ = config->asString(componentXPath + "/cache-dir", "/var/cache/fastcgi3-container/form-auth-cache/");
 	if (cache_dir_.empty()) {
 		throw std::runtime_error("Empty cache directory");
 	}
 	if (*cache_dir_.rbegin() != '/') {
 		cache_dir_.push_back('/');
 	}
+	fastcgi::FileSystemUtils::createDirectories(cache_dir_);
 
 	window_ = config->asInt(componentXPath + "/file-window", 1024*1024);
 

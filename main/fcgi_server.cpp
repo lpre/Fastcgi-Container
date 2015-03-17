@@ -259,7 +259,7 @@ FCGIServer::initTimeStatistics() {
 
 void
 FCGIServer::createWorkThreads() {
-	for (auto& endpoint : endpoints_) {
+	for (auto &endpoint : endpoints_) {
 		std::function<void()> f = std::bind(&FCGIServer::handle, this, endpoint);
 		for (unsigned short t=0, threads=endpoint->threads(); t<threads; ++t) {
             globalPool_.push_back(std::unique_ptr<std::thread>(new std::thread(f)));
@@ -273,19 +273,20 @@ FCGIServer::initFastCGISubsystem() {
 		throw std::runtime_error("Cannot init fastcgi library");
 	}
 
+	const Config *config = globals_->config();
+
 	std::vector<std::string> v;
-	globals_->config()->subKeys("/fastcgi/daemon/endpoint", v);
+	config->subKeys("/fastcgi/daemon/endpoint", v);
 
-	for (auto& c : v) {
-
+	for (auto &c : v) {
 		std::shared_ptr<Endpoint> endpoint = std::make_shared<Endpoint>(
-			globals_->config()->asString(c + "/socket", ""),
-			globals_->config()->asString(c + "/port", ""),
-			globals_->config()->asString(c + "/@keepConnection", "false")=="true"?1:0,
-			globals_->config()->asInt(c + "/threads", 1)
+			config->asString(c + "/socket", ""),
+			config->asString(c + "/port", ""),
+			config->asString(c + "/@keepalive", config->asString(c + "/@keepConnection", "false"))=="true"?1:0,
+			config->asInt(c + "/threads", 1)
 		);
 
-		const int backlog = globals_->config()->asInt(c + "/backlog", SOMAXCONN);
+		const int backlog = config->asInt(c + "/backlog", SOMAXCONN);
 		endpoint->openSocket(backlog);	
 		endpoints_.push_back(endpoint);
 	}
@@ -486,7 +487,7 @@ FCGIServer::getServerInfo() const {
 
 		std::stringstream s;
 		s << "<endpoint_pools>\n";
-		for (auto& endpoint : endpoints_) {
+		for (auto &endpoint : endpoints_) {
 			s << "<endpoint"
 				<< " socket=\"" << endpoint->toString() << "\""
 				<< " threads=\"" << endpoint->threads() << "\""
@@ -496,7 +497,7 @@ FCGIServer::getServerInfo() const {
 		s << "</endpoint_pools>\n";
 
 		const Globals::ThreadPoolMap& pools = globals_->pools();
-		for (auto& map : pools) {
+		for (auto &map : pools) {
 			const RequestsThreadPool *pool = map.second.get();
 			ThreadPoolInfo info = pool->getInfo();
 			uint64_t goodTasks = info.goodTasksCounter;

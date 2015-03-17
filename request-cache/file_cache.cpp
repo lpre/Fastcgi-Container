@@ -107,7 +107,7 @@ FileRequestCache::FileRequestCache(std::shared_ptr<ComponentContext> context) :
 	const std::string componentXPath = context->getComponentXPath();
 
 	cache_dir_ = config->asString(
-		componentXPath + "/cache-dir", "/var/cache/fastcgi-daemon/request-cache/");
+		componentXPath + "/cache-dir", "/var/cache/fastcgi3-container/request-cache/");
 
 	if (cache_dir_.empty()) {
 		throw std::runtime_error("Empty cache directory");
@@ -116,6 +116,7 @@ FileRequestCache::FileRequestCache(std::shared_ptr<ComponentContext> context) :
 	if (*cache_dir_.rbegin() != '/') {
 		cache_dir_.push_back('/');
 	}
+	fastcgi::FileSystemUtils::createDirectories(cache_dir_);
 
 	window_ = config->asInt(componentXPath + "/file-window", 1024*1024);
 	max_retries_ = config->asInt(componentXPath + "/max-retries", 2);
