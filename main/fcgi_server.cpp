@@ -281,7 +281,7 @@ FCGIServer::initFastCGISubsystem() {
 		std::shared_ptr<Endpoint> endpoint = std::make_shared<Endpoint>(
 			globals_->config()->asString(c + "/socket", ""),
 			globals_->config()->asString(c + "/port", ""),
-			globals_->config()->asInt(c + "/@keepConnection", 0),
+			globals_->config()->asString(c + "/@keepConnection", "false")=="true"?1:0,
 			globals_->config()->asInt(c + "/threads", 1)
 		);
 
