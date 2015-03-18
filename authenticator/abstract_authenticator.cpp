@@ -51,7 +51,7 @@ AbstractAuthenticator::AbstractAuthenticator(std::shared_ptr<fastcgi::ComponentC
 }
 
 AbstractAuthenticator::~AbstractAuthenticator() {
-};
+}
 
 void
 AbstractAuthenticator::onLoad() {

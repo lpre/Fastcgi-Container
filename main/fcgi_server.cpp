@@ -158,7 +158,6 @@ FCGIServer::join() {
 
 void
 FCGIServer::stopInternal() {
-
 	Status stat = status();
 	if (Status::NOT_INITED == stat) {
 		throw std::runtime_error("Cannot stop server because it is not started yet");
@@ -287,12 +286,12 @@ FCGIServer::initFastCGISubsystem() {
 		);
 
 		const int backlog = config->asInt(c + "/backlog", SOMAXCONN);
-		endpoint->openSocket(backlog);	
+		endpoint->openSocket(backlog);
 		endpoints_.push_back(endpoint);
 	}
 
 	if (endpoints_.empty()) {
-		throw std::runtime_error("You must specify at least one endpoint");
+		throw std::runtime_error("At least one endpoint has to be configured");
 	}
 }
 
@@ -323,14 +322,14 @@ FCGIServer::handle(std::shared_ptr<Endpoint> endpoint) {
 			}
 			holder = active_thread_holder_;
 			if (status < 0) {
-				throw std::runtime_error("failed to accept fastcgi request: " + std::to_string(status));
+				throw std::runtime_error("Failed to accept fastcgi request: " + std::to_string(status));
 			}
 			busyCounter.increment();
 
 			try {
 				request->attach();
 			} catch (const std::exception &e) {
-				logger->error("caught exception while attach request: %s", e.what());
+				logger->error("Failed to attach fastcgi request: %s", e.what());
 				task.request->sendError(400);
 				continue;
 			}
@@ -342,16 +341,16 @@ FCGIServer::handle(std::shared_ptr<Endpoint> endpoint) {
 			}
 
 		} catch (const std::exception &e) {
-			logger->error("caught exception while handling request: %s", e.what());
+			logger->error("Failed to handle fastcgi request: %s", e.what());
 		} catch (...) {
-			logger->error("caught unknown exception while handling request");
+			logger->error("Caught unknown exception while handling fastcgi request");
 		}
 	}
 }
 
 void
 FCGIServer::handleRequest(RequestTask task) {
-	logger()->debug("handling request %s", task.request->getScriptName().c_str());
+	logger()->debug("Handling request %s", task.request->getScriptName().c_str());
 
 	task.futureHandlers = [this](RequestTask task) {
 		const HandlerSet::HandlerDescription* handler = getHandler(task);
@@ -366,7 +365,7 @@ FCGIServer::handleRequest(RequestTask task) {
 	};
 
 	task.dispatch = [this](RequestTask task) {
-		logger()->debug("dispatching request %s", task.request->getScriptName().c_str());
+		logger()->debug("Dispatching request %s", task.request->getScriptName().c_str());
 
 		std::vector<std::shared_ptr<Filter>> filters;
 		getFilters(task, filters);
@@ -451,75 +450,75 @@ FCGIServer::writePid(const Config& config) {
 		f.exceptions(std::ios::badbit);
 		f << static_cast<int>(getpid());
 	} catch (std::ios::failure &e) {
-		std::cerr << "can not open file " << file << std::endl;
+		std::cerr << "Cannot open file " << file << std::endl;
 		throw;
 	}
 }
 
 std::string
 FCGIServer::getServerInfo() const {
+	std::stringstream info;
 
-	std::string info;
+	const std::string t1 = "  ";
+	const std::string t2 = "    ";
+	const std::string t3 = "      ";
+
 	Status stat = status();
 
-	info += "<fastcgi-daemon>\n";
+	info << "<fastcgi-container>\n";
 
-	info += "<status>";
+	info << "  <status>";
 	switch (stat) {
 		case Status::LOADING:
-			info += "loading";
+			info << "loading";
 			break;
 		case Status::RUNNING:
-			info += "running";
+			info << "running";
 			break;
 		case Status::NOT_INITED:
-			info += "not inited";
+			info << "not inited";
 			break;
 		default:
-			info += stopper_->stopped() ? "stopping" : "unknown";
+			info << (stopper_->stopped() ? "stopping" : "unknown");
 			break;
-	};
-	info += "</status>\n";
+	}
+	info << "</status>\n";
 
 	if (Status::RUNNING == stat) {
+		info << t1 << "<pools>\n";
 
-		info += "<pools>\n";
-
-		std::stringstream s;
-		s << "<endpoint_pools>\n";
+		info << t2 << "<endpoint_pools>\n";
 		for (auto &endpoint : endpoints_) {
-			s << "<endpoint"
-				<< " socket=\"" << endpoint->toString() << "\""
-				<< " threads=\"" << endpoint->threads() << "\""
-				<< " busy=\"" << endpoint->getBusyCounter() << "\""
-				<< "/>\n";
+			info << t3 << "<endpoint"
+				 << " socket=\"" << endpoint->toString() << "\""
+				 << " threads=\"" << endpoint->threads() << "\""
+				 << " busy=\"" << endpoint->getBusyCounter() << "\""
+				 << "/>\n";
 		}
-		s << "</endpoint_pools>\n";
+		info << t2 << "</endpoint_pools>\n";
 
 		const Globals::ThreadPoolMap& pools = globals_->pools();
 		for (auto &map : pools) {
 			const RequestsThreadPool *pool = map.second.get();
-			ThreadPoolInfo info = pool->getInfo();
-			uint64_t goodTasks = info.goodTasksCounter;
-			uint64_t badTasks = info.badTasksCounter;
-			s << "<pool name=\"" << map.first << "\""
-				<< " threads=\"" << info.threadsNumber << "\""
-				<< " busy=\"" << info.busyThreadsCounter << "\""
-				<< " queue=\"" << info.queueLength << "\""
-				<< " current_queue=\"" << info.currentQueue << "\""
-				<< " all_tasks=\"" << (goodTasks + badTasks)  << "\""
-				<< " exception_tasks=\"" << badTasks << "\""
-				<< "/>\n";
+			ThreadPoolInfo tpinfo = pool->getInfo();
+			uint64_t goodTasks = tpinfo.goodTasksCounter;
+			uint64_t badTasks = tpinfo.badTasksCounter;
+			info << t2 << "<pool name=\"" << map.first << "\""
+				 << " threads=\"" << tpinfo.threadsNumber << "\""
+				 << " busy=\"" << tpinfo.busyThreadsCounter << "\""
+				 << " queue=\"" << tpinfo.queueLength << "\""
+				 << " current_queue=\"" << tpinfo.currentQueue << "\""
+				 << " all_tasks=\"" << (goodTasks + badTasks)  << "\""
+				 << " exception_tasks=\"" << badTasks << "\""
+				 << "/>\n";
 		}
 
-		s << "</pools>\n";
-
-		info += s.str();
+		info << t1 << "</pools>\n";
 	}
 	
-	info += "</fastcgi-daemon>\n";
+	info << "</fastcgi-container>\n";
 
-	return info;
+	return info.str();
 }
 
 } // namespace fastcgi

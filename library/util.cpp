@@ -19,7 +19,6 @@
 
 #include "settings.h"
 
-#include <iostream>
 #include <cstdlib>
 #include <stdexcept>
 #include <limits>
@@ -341,15 +340,37 @@ FileSystemUtils::createDirectories(const std::string& path) {
 	std::string newFolder = "";
 	for (auto& dir : dirs) {
 		newFolder += "/"+dir;
-		if (0!=mkdir(newFolder.c_str(), S_IRUSR | S_IWUSR | S_IXUSR)) {
-			if (EEXIST!=errno) {
-				std::error_condition econd = std::system_category().default_error_condition(errno);
-				std::cerr << "Could not create directory \"" << path << "\": " << econd.message() << std::endl;
-				throw std::system_error(errno, std::system_category());
-			}
+		if (0!=mkdir(newFolder.c_str(), S_IRUSR | S_IWUSR | S_IXUSR) && EEXIST!=errno) {
+			throw std::system_error(errno, std::system_category());
 		}
 	}
 }
+
+struct MatchPathSeparator {
+    bool operator()( char ch ) const {
+        return ch == '\\' || ch == '/';
+    }
+};
+
+std::string
+FileSystemUtils::basename(const std::string& path) {
+    return std::string(std::find_if(path.rbegin(), path.rend(), MatchPathSeparator()).base(), path.end());
+}
+
+std::string
+FileSystemUtils::removeExtension(const std::string& filename) {
+    auto pivot = std::find(filename.rbegin(), filename.rend(), '.');
+    return pivot == filename.rend()
+        ? filename
+        : std::string( filename.begin(), pivot.base() - 1 );
+}
+
+std::string
+FileSystemUtils::pathToFile(const std::string& path) {
+	std::string name = basename(path);
+	return path.substr(0, path.length()-name.length());
+}
+
 
 
 } // namespace fastcgi

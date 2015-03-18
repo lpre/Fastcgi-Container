@@ -65,14 +65,20 @@ FormAuthenticator::FormAuthenticator(std::shared_ptr<fastcgi::ComponentContext> 
 		formAction_.insert(0, "/");
 	}
 
-	cache_dir_ = config->asString(componentXPath + "/cache-dir", "/var/cache/fastcgi3-container/form-auth-cache/");
+	cache_dir_ = config->asString(componentXPath + "/cache-dir", "/tmp/fastcgi3-container/cache/form-auth-cache/");
 	if (cache_dir_.empty()) {
+		std::cerr << "FormAuthenticator: cache directory is not specified" << std::endl;
 		throw std::runtime_error("Empty cache directory");
 	}
 	if (*cache_dir_.rbegin() != '/') {
 		cache_dir_.push_back('/');
 	}
-	fastcgi::FileSystemUtils::createDirectories(cache_dir_);
+	try {
+		fastcgi::FileSystemUtils::createDirectories(cache_dir_);
+	} catch (const std::exception &e) {
+		std::cerr << "FormAuthenticator: could not create cache directory \"" << cache_dir_ << "\": " << e.what() << std::endl;
+		throw;
+	}
 
 	window_ = config->asInt(componentXPath + "/file-window", 1024*1024);
 
@@ -82,16 +88,7 @@ FormAuthenticator::FormAuthenticator(std::shared_ptr<fastcgi::ComponentContext> 
 }
 
 FormAuthenticator::~FormAuthenticator() {
-}
-
-void
-FormAuthenticator::onLoad() {
-	AbstractAuthenticator::onLoad();
-}
-
-void
-FormAuthenticator::onUnload() {
-	AbstractAuthenticator::onUnload();
+	printf("FormAuthenticator deleted\n");
 }
 
 bool

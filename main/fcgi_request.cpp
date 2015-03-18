@@ -126,7 +126,7 @@ FastcgiRequest::accept() {
     int status = FCGX_Accept_r(&fcgiRequest_);
 
     if (status >= 0) {
-    	// Apache mod_proxy_fcgi does not keep connection
+    	// TODO: Apache mod_proxy_fcgi does not keep connection
         fcgiRequest_.keepConnection = endpoint_->getKeepConnection();
 
         if (logTimes_ || statistics_) {

@@ -23,9 +23,12 @@
 #include <cassert>
 #include <cerrno>
 #include <sstream>
+#include <iostream>
+#include <system_error>
 
 #include <fcgiapp.h>
 
+#include "fastcgi3/util.h"
 #include "endpoint.h"
 
 #ifdef HAVE_DMALLOC_H
@@ -96,14 +99,29 @@ Endpoint::getBusyCounter() const {
 void
 Endpoint::openSocket(const int backlog) {
 	std::lock_guard<std::mutex> sl(mutex_);
+
+	if (!socket_path_.empty()) {
+		try {
+			// Check whether we can create the socket file
+			// Typical  error: "Permission denied"
+			FileSystemUtils::createDirectories(FileSystemUtils::pathToFile(socket_path_));
+		} catch (const std::exception &e) {
+			std::cerr << "Endpoint: could not create Unix domain socket \"" << socket_path_ << "\": " << e.what() << std::endl;
+			throw;
+		}
+	}
+
 	socket_ = FCGX_OpenSocket(toString().c_str(), backlog);
 	if (-1 == socket_) {
 		std::stringstream stream;
 		stream << "can not open fastcgi socket: " << toString() << "[" << errno << "]";
 		throw std::runtime_error(stream.str());
 	}
+
 	if (!socket_path_.empty()) {
-		chmod(socket_path_.c_str(), 0666);
+		if (0!=chmod(socket_path_.c_str(), 0666)) {
+			throw std::system_error(errno, std::system_category());
+		}
 	}
 }
 

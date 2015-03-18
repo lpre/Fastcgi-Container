@@ -19,6 +19,7 @@
 
 #include "settings.h"
 
+#include <iostream>
 #include <unistd.h>
 #include <cerrno>
 #include <stdexcept>
@@ -106,17 +107,20 @@ FileRequestCache::FileRequestCache(std::shared_ptr<ComponentContext> context) :
     const Config *config = context->getConfig();
 	const std::string componentXPath = context->getComponentXPath();
 
-	cache_dir_ = config->asString(
-		componentXPath + "/cache-dir", "/var/cache/fastcgi3-container/request-cache/");
-
+	cache_dir_ = config->asString(componentXPath + "/cache-dir", "/tmp/fastcgi3-container/cache/request-cache/");
 	if (cache_dir_.empty()) {
+		std::cerr << "FileRequestCache: cache directory is not specified" << std::endl;
 		throw std::runtime_error("Empty cache directory");
 	}
-
 	if (*cache_dir_.rbegin() != '/') {
 		cache_dir_.push_back('/');
 	}
-	fastcgi::FileSystemUtils::createDirectories(cache_dir_);
+	try {
+		fastcgi::FileSystemUtils::createDirectories(cache_dir_);
+	} catch (const std::exception &e) {
+		std::cerr << "FileRequestCache: could not create cache directory \"" << cache_dir_ << "\": " << e.what() << std::endl;
+		throw;
+	}
 
 	window_ = config->asInt(componentXPath + "/file-window", 1024*1024);
 	max_retries_ = config->asInt(componentXPath + "/max-retries", 2);
@@ -136,9 +140,7 @@ FileRequestCache::onLoad() {
 
 	const std::string managerComponentName = context()->getConfig()->asString(
 		context()->getComponentXPath() + "/session[@attach=\"1\" or @attach=\"true\"]@component",
-		globals_->config()->asString(
-			"/fastcgi[count(session)=1]/session[@attach=\"1\" or @attach=\"true\"]/@component",
-			StringUtils::EMPTY_STRING));
+		globals_->config()->asString("/fastcgi[count(session)=1]/session[@attach=\"1\" or @attach=\"true\"]/@component", StringUtils::EMPTY_STRING));
 	if (!managerComponentName.empty()) {
 		std::shared_ptr<Component> managerComponent = globals()->components()->find(managerComponentName);
 		if (!managerComponent) {
@@ -201,8 +203,7 @@ FileRequestCache::createHardLink(const std::string &key) {
 	std::string new_path = cache_dir_ + new_key;
 	if (-1 == link(path.c_str(), new_path.c_str())) {
 		char buffer[256];
-		logger_->error("Cannot link file %s: %s",
-			path.c_str(), strerror_r(errno, buffer, sizeof(buffer)));
+		logger_->error("Cannot link file %s: %s", path.c_str(), strerror_r(errno, buffer, sizeof(buffer)));
 		return StringUtils::EMPTY_STRING;
 	}
 	return new_key;

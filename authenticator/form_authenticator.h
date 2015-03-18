@@ -51,9 +51,6 @@ public:
 	FormAuthenticator(std::shared_ptr<fastcgi::ComponentContext> context);
 	virtual ~FormAuthenticator();
 
-	virtual void onLoad() override;
-	virtual void onUnload() override;
-
 	void doFilter(fastcgi::Request *request, fastcgi::HandlerContext *context, std::function<void(fastcgi::Request *request, fastcgi::HandlerContext *context)> next) override;
 
 	virtual bool authenticate(fastcgi::Request* request) const override;

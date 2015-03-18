@@ -101,6 +101,9 @@ public:
 class FileSystemUtils {
 public:
 	static void createDirectories(const std::string& path);
+	static std::string basename(const std::string& path);
+	static std::string removeExtension(const std::string& filename);
+	static std::string pathToFile(const std::string& path);
 };
 
 
