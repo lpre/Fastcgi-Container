@@ -87,8 +87,7 @@ createDirectories(const std::string& path) {
 	for (auto& dir : dirs) {
 		newFolder += "/"+dir;
 		if (0!=mkdir(newFolder.c_str(), S_IRUSR | S_IWUSR | S_IXUSR) && EEXIST!=errno) {
-			std::error_condition econd = std::system_category().default_error_condition(errno);
-			std::cerr << "Could not create directory \"" << path << "\": " << econd.message() << std::endl;
+			std::cerr << "Could not create directory \"" << path << "\": " << strerror(errno) << std::endl;
 			throw std::system_error(errno, std::system_category());
 		}
 	}

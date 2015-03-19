@@ -43,6 +43,7 @@ public:
 	static const std::string FORM_ACTION;
 	static const std::string FORM_USERNAME;
 	static const std::string FORM_PASSWORD;
+	static const std::string DEFAULT_CACHE_DIR;
 protected:
 	static const std::string PARAM_NAME_STORED_REQUEST;
 	static const std::string PARAM_NAME_STORED_REQUEST_URI;

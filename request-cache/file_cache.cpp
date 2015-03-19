@@ -107,16 +107,19 @@ FileRequestCache::FileRequestCache(std::shared_ptr<ComponentContext> context) :
     const Config *config = context->getConfig();
 	const std::string componentXPath = context->getComponentXPath();
 
-	cache_dir_ = config->asString(componentXPath + "/cache-dir", "/tmp/fastcgi3-container/cache/request-cache/");
+	cache_dir_ = config->asString(componentXPath + "/cache-dir", StringUtils::EMPTY_STRING);
 	if (cache_dir_.empty()) {
-		std::cerr << "FileRequestCache: cache directory is not specified" << std::endl;
-		throw std::runtime_error("Empty cache directory");
+		cache_dir_ = "/tmp/fastcgi3-container/cache/request-cache/";
+		std::cout << "FileRequestCache: cache directory is not configured; using default directory \"" << cache_dir_ << "\"" << std::endl;
 	}
 	if (*cache_dir_.rbegin() != '/') {
 		cache_dir_.push_back('/');
 	}
 	try {
 		fastcgi::FileSystemUtils::createDirectories(cache_dir_);
+		if (!fastcgi::FileSystemUtils::isWritable(cache_dir_)) {
+			throw std::runtime_error("Permission denied");
+		}
 	} catch (const std::exception &e) {
 		std::cerr << "FileRequestCache: could not create cache directory \"" << cache_dir_ << "\": " << e.what() << std::endl;
 		throw;

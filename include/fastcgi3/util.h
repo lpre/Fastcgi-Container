@@ -23,6 +23,8 @@
 #include <string>
 #include <vector>
 
+#include <sys/stat.h>
+
 #include "fastcgi3/data_buffer.h"
 
 namespace fastcgi
@@ -100,7 +102,8 @@ public:
 
 class FileSystemUtils {
 public:
-	static void createDirectories(const std::string& path);
+	static void createDirectories(const std::string& path, mode_t open_mode=S_IRUSR|S_IWUSR|S_IXUSR);
+	static bool isWritable(const std::string& path);
 	static std::string basename(const std::string& path);
 	static std::string removeExtension(const std::string& filename);
 	static std::string pathToFile(const std::string& path);

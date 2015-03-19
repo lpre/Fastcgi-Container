@@ -104,7 +104,11 @@ Endpoint::openSocket(const int backlog) {
 		try {
 			// Check whether we can create the socket file
 			// Typical  error: "Permission denied"
-			FileSystemUtils::createDirectories(FileSystemUtils::pathToFile(socket_path_));
+			std::string path = FileSystemUtils::pathToFile(socket_path_);
+			FileSystemUtils::createDirectories(path);
+			if (!FileSystemUtils::isWritable(path)) {
+				throw std::runtime_error("Permission denied");
+			}
 		} catch (const std::exception &e) {
 			std::cerr << "Endpoint: could not create Unix domain socket \"" << socket_path_ << "\": " << e.what() << std::endl;
 			throw;

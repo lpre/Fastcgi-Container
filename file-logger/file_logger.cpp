@@ -36,6 +36,7 @@
 
 #include "fastcgi3/component_factory.h"
 #include "fastcgi3/config.h"
+#include "fastcgi3/util.h"
 
 #ifdef HAVE_DMALLOC_H
 #include <dmalloc.h>
@@ -76,18 +77,16 @@ FileLogger::FileLogger(std::shared_ptr<ComponentContext> context) : Component(co
         }
     }
 
-    std::string::size_type pos = 0;
-    while (true) {
-        pos = filename_.find('/', pos + 1);
-        if (std::string::npos == pos) {
-            break;
-        }
-        std::string name = filename_.substr(0, pos);
-        int res = mkdir(name.c_str(), open_mode_ | S_IXUSR | S_IXGRP | S_IXOTH);
-        if (-1 == res && EEXIST != errno) {
-            std::cerr << "failed to create dir: " << name << ". Errno: " << errno << std::endl;
-        }
-    }
+	try {
+		std::string path = FileSystemUtils::pathToFile(filename_);
+		FileSystemUtils::createDirectories(path, open_mode_|S_IXUSR|S_IXGRP|S_IXOTH);
+		if (!FileSystemUtils::isWritable(path)) {
+			throw std::runtime_error("Permission denied");
+		}
+	} catch (const std::exception &e) {
+		std::cerr << "FileLogger: failed to create log file \"" << filename_ << "\": " << e.what() << std::endl;
+		throw;
+	}
     
     openFile();
 }
@@ -117,7 +116,8 @@ void FileLogger::openFile() {
     }
     fd_ = open(filename_.c_str(), O_WRONLY | O_CREAT | O_APPEND, open_mode_);
     if (-1 == fd_) {
-        std::cerr << "File logger cannot open file for writing: " << filename_ << std::endl;
+    	std::cerr << "FileLogger: cannot open file \"" << filename_ << "\" for writing: " << strerror(errno) << std::endl;
+		throw std::system_error(errno, std::system_category());
     }
 }
 
@@ -133,7 +133,7 @@ FileLogger::log(const Logger::Level level, const char* format, va_list args) {
     }
 
     // Check without lock!
-    if (fd_ == -1) {
+    if (-1 == fd_) {
         return;
     }
 
@@ -173,14 +173,11 @@ FileLogger::prepareFormat(char * buf, size_t size, const Logger::Level level, co
 
     if (print_time_ && print_level_) {
         snprintf(buf, size - 1, "%s %s: %s\n", timestr, level_str.c_str(), format);
-    }
-    else if (print_time_) {
+    } else if (print_time_) {
         snprintf(buf, size - 1, "%s %s\n", timestr, format);
-    }
-    else if (print_level_) {
+    } else if (print_level_) {
         snprintf(buf, size - 1, "%s: %s\n", level_str.c_str(), format);
-    }
-    else {
+    } else {
         snprintf(buf, size - 1, "%s\n", format);
     }
     buf[size - 1] = '\0';
@@ -203,7 +200,7 @@ FileLogger::writingThread() {
                 while (wrote < i.length()) {
                 	int res = ::write(fd_, i.c_str() + wrote, i.length() - wrote);
                 	if (res < 0) {
-                		std::cerr << "Failed to write to log " << filename_ << " : " << strerror(errno) << std::endl;
+                		std::cerr << "FileLogger: failed to write to log \"" << filename_ << "\": " << strerror(errno) << std::endl;
                 		break;
                 	} else {
                 		wrote += res;

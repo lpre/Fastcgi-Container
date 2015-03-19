@@ -48,6 +48,7 @@ const std::string FormAuthenticator::FORM_USERNAME {"j_username"};
 const std::string FormAuthenticator::FORM_PASSWORD {"j_password"};
 const std::string FormAuthenticator::PARAM_NAME_STORED_REQUEST {"auth-stored-request"};
 const std::string FormAuthenticator::PARAM_NAME_STORED_REQUEST_URI {"auth-stored-request-uri"};
+const std::string FormAuthenticator::DEFAULT_CACHE_DIR {"/tmp/fastcgi3-container/cache/form-auth-cache/"};
 
 FormAuthenticator::FormAuthenticator(std::shared_ptr<fastcgi::ComponentContext> context)
 : fastcgi::Component(context), AbstractAuthenticator(context) {
@@ -65,16 +66,19 @@ FormAuthenticator::FormAuthenticator(std::shared_ptr<fastcgi::ComponentContext> 
 		formAction_.insert(0, "/");
 	}
 
-	cache_dir_ = config->asString(componentXPath + "/cache-dir", "/tmp/fastcgi3-container/cache/form-auth-cache/");
+	cache_dir_ = config->asString(componentXPath + "/cache-dir", StringUtils::EMPTY_STRING);
 	if (cache_dir_.empty()) {
-		std::cerr << "FormAuthenticator: cache directory is not specified" << std::endl;
-		throw std::runtime_error("Empty cache directory");
+		cache_dir_ = FormAuthenticator::DEFAULT_CACHE_DIR;
+		std::cout << "FormAuthenticator: cache directory is not configured; using default directory \"" << FormAuthenticator::DEFAULT_CACHE_DIR << "\"" << std::endl;
 	}
 	if (*cache_dir_.rbegin() != '/') {
 		cache_dir_.push_back('/');
 	}
 	try {
-		fastcgi::FileSystemUtils::createDirectories(cache_dir_);
+		FileSystemUtils::createDirectories(cache_dir_);
+		if (!FileSystemUtils::isWritable(cache_dir_)) {
+			throw std::runtime_error("Permission denied");
+		}
 	} catch (const std::exception &e) {
 		std::cerr << "FormAuthenticator: could not create cache directory \"" << cache_dir_ << "\": " << e.what() << std::endl;
 		throw;

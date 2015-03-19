@@ -26,6 +26,7 @@
 #include <openssl/md5.h>
 #include <uuid/uuid.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <dirent.h>
 #include <system_error>
 
@@ -332,15 +333,20 @@ UUIDUtils::getNewId() {
 }
 
 
+bool
+FileSystemUtils::isWritable(const std::string& path) {
+	return 0 == access(path.c_str(), R_OK|W_OK);
+}
+
 void
-FileSystemUtils::createDirectories(const std::string& path) {
+FileSystemUtils::createDirectories(const std::string& path, mode_t open_mode) {
 	std::vector<std::string> dirs;
 	fastcgi::StringUtils::split(path, '/', dirs);
 
 	std::string newFolder = "";
 	for (auto& dir : dirs) {
 		newFolder += "/"+dir;
-		if (0!=mkdir(newFolder.c_str(), S_IRUSR | S_IWUSR | S_IXUSR) && EEXIST!=errno) {
+		if (0!=mkdir(newFolder.c_str(), open_mode) && EEXIST!=errno) {
 			throw std::system_error(errno, std::system_category());
 		}
 	}
