@@ -80,7 +80,7 @@ Configure available HTTPD server to connect with Fastcgi Container.
 
 For example, to run examples via Unix socket with Apache2 HTTPD using modules `mod_poxy` and `mod_proxy_fcgi`, add the following entries into Apache configuration file:
 
-	ProxyPass /myapp/ unix:///tmp/fastcgi3-example.sock|fcgi://localhost/
+	ProxyPass /myapp/ unix:///var/run/fastcgi3-container/example.sock|fcgi://localhost/
  
 To run examples via tcp socket, add the following entries into Apache configuration file:
 
