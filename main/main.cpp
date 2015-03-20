@@ -33,6 +33,7 @@
 
 #include "fcgi_server.h"
 #include "fastcgi3/config.h"
+#include "fastcgi3/util.h"
 #include "details/globals.h"
 
 #ifdef HAVE_DMALLOC_H
@@ -81,7 +82,7 @@ daemonize() {
 	pid_t pid = fork();
 	if (-1 == pid) {
 		std::stringstream ss;
-		ss << "Could not become a daemon: fork #1 failed: " << errno;
+		ss << "Could not become a daemon: fork #1 failed: " << fastcgi::StringUtils::error(errno);
 		throw std::logic_error(ss.str());
 	}
 	if (0 != pid) {
@@ -91,14 +92,14 @@ daemonize() {
 	pid_t sid = setsid();
 	if (-1 == sid) {
 		std::stringstream ss;
-		ss << "Could not become a daemon: setsid failed: " << errno;;
+		ss << "Could not become a daemon: setsid failed: " << fastcgi::StringUtils::error(errno);
 		throw std::logic_error(ss.str());
 	}
 
 	pid = fork();
 	if (-1 == pid) {
 		std::stringstream ss;
-		ss << "Could not become a daemon: fork #2 failed: " << errno;
+		ss << "Could not become a daemon: fork #2 failed: " << fastcgi::StringUtils::error(errno);
 		throw std::logic_error(ss.str());
 	}
 	if (0 != pid) {

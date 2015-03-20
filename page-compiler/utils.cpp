@@ -78,6 +78,14 @@ replaceAll(std::string str, const std::string& toReplace, const std::string& rep
 	return std::move(str);
 }
 
+std::string
+error(int error) {
+	char buffer[256];
+	strerror_r(error, buffer, sizeof(buffer));
+	std::string result(buffer);
+	return result;
+}
+
 void
 createDirectories(const std::string& path) {
 	std::vector<std::string> dirs;
@@ -87,7 +95,7 @@ createDirectories(const std::string& path) {
 	for (auto& dir : dirs) {
 		newFolder += "/"+dir;
 		if (0!=mkdir(newFolder.c_str(), S_IRUSR | S_IWUSR | S_IXUSR) && EEXIST!=errno) {
-			std::cerr << "Could not create directory \"" << path << "\": " << strerror(errno) << std::endl;
+			std::cerr << "Could not create directory \"" << path << "\": " << error(errno) << std::endl;
 			throw std::system_error(errno, std::system_category());
 		}
 	}

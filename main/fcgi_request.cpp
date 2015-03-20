@@ -185,8 +185,7 @@ FastcgiRequest::write(const char *buf, int size) {
         std::stringstream str;
         int error = FCGX_GetError(fcgiRequest_.out);
         if (error > 0) {
-            char buffer[256];
-            str << "Cannot write data to fastcgi socket: " << strerror_r(error, buffer, sizeof(buffer)) << ". ";
+            str << "Cannot write data to fastcgi socket: " << StringUtils::error(error) << ". ";
         } else {
             str << "FastCGI error. ";
         }

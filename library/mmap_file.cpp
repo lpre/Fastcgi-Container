@@ -30,6 +30,7 @@
 
 #include <unistd.h>
 
+#include "fastcgi3/util.h"
 #include "details/mmap_file.h"
 
 #ifdef HAVE_DMALLOC_H
@@ -55,12 +56,12 @@ MMapFile::MMapFile(const char *name, std::uint64_t window, bool is_read_only)
 	}
 
 	if (-1 == fdes_->value()) {
-		throw std::runtime_error(error(errno));
+		throw std::runtime_error(StringUtils::error(errno));
 	}
 
 	struct stat fs;
 	if (-1 == fstat(fdes_->value(), &fs)) {
-		throw std::runtime_error(error(errno));
+		throw std::runtime_error(StringUtils::error(errno));
 	}
 
 	size_ = fs.st_size;
@@ -111,23 +112,11 @@ MMapFile::empty() const {
 	return 0 == size_;
 }
 
-std::string
-MMapFile::error(int error) {
-	char buffer[256];
-
-//	std::string result(strerror_r(error, buffer, sizeof(buffer)));
-
-	strerror_r(error, buffer, sizeof(buffer));
-	std::string result(buffer);
-
-	return result;
-}
-
 void
 MMapFile::resize(std::uint64_t newsize) {
 	unmap();
 	if (-1 == ftruncate(fdes_->value(), newsize)) {
-		throw std::runtime_error(error(errno));
+		throw std::runtime_error(StringUtils::error(errno));
 	}
 	size_ = newsize;
 	map_segment(0);
@@ -166,7 +155,7 @@ void
 MMapFile::unmap() {
 	if (nullptr != pointer_) {
 		if (-1 == munmap(pointer_, segment_len_)) {
-			throw std::runtime_error(error(errno));
+			throw std::runtime_error(StringUtils::error(errno));
 		}
 		pointer_ = nullptr;
 		segment_start_ = 0;
@@ -196,7 +185,7 @@ MMapFile::map_range(std::uint64_t begin, std::uint64_t end) {
 			fdes_->value(), begin_base);
 	}
 	if (MAP_FAILED == pointer_) {
-		throw std::runtime_error(error(errno));
+		throw std::runtime_error(StringUtils::error(errno));
 	}
 	segment_start_ = begin_base;
 	segment_len_ = end - begin_base;

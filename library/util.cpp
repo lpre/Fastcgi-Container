@@ -195,6 +195,14 @@ StringUtils::split(const std::string& str, char c, std::vector<std::string> &v) 
 	} while (0 != *s++);
 }
 
+std::string
+StringUtils::error(int error) {
+	char buffer[256];
+	strerror_r(error, buffer, sizeof(buffer));
+	std::string result(buffer);
+	return result;
+}
+
 HttpDateUtils::HttpDateUtils() {
 }
 

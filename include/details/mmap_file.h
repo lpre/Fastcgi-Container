@@ -70,7 +70,6 @@ private:
 	void check_index(std::uint64_t index) const;
 	bool mapped(std::uint64_t index) const;
 	bool mapped(std::uint64_t begin, std::uint64_t end) const;
-	std::string error(int error);
 
 private:
 	void *pointer_;

@@ -118,7 +118,7 @@ Endpoint::openSocket(const int backlog) {
 	socket_ = FCGX_OpenSocket(toString().c_str(), backlog);
 	if (-1 == socket_) {
 		std::stringstream stream;
-		stream << "can not open fastcgi socket: " << toString() << "[" << errno << "]";
+		stream << "can not open fastcgi socket: " << toString() << "[" << StringUtils::error(errno) << "]";
 		throw std::runtime_error(stream.str());
 	}
 

@@ -185,7 +185,7 @@ FCGIServer::initMonitorThread() {
 
 	int one = 1;
 	if (-1 == setsockopt (monitorSocket_, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one))) {
-		throw std::runtime_error("Cannot reuse monitor port: " + std::to_string(errno));
+		throw std::runtime_error("Cannot reuse monitor port: " + std::string(StringUtils::error(errno)));
 	}
 
 	sockaddr_in addr;
@@ -279,9 +279,9 @@ FCGIServer::initFastCGISubsystem() {
 
 	for (auto &c : v) {
 		std::shared_ptr<Endpoint> endpoint = std::make_shared<Endpoint>(
-			config->asString(c + "/socket", ""),
-			config->asString(c + "/port", ""),
-			config->asString(c + "/@keepalive", config->asString(c + "/@keepConnection", "false"))=="true"?1:0,
+			config->asString(c + "/socket", StringUtils::EMPTY_STRING),
+			config->asString(c + "/port", StringUtils::EMPTY_STRING),
+			config->asString(c + "/@keepalive", config->asString(c + "/@keepConnection", "true"))=="true"?1:0,
 			config->asInt(c + "/threads", 1)
 		);
 

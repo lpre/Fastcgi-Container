@@ -29,6 +29,8 @@ void split(const std::string& str, char c, std::vector<std::string> &list);
 
 std::string replaceAll(std::string str, const std::string& toReplace, const std::string& replaceWith);
 
+std::string error(int error);
+
 void createDirectories(const std::string& path);
 
 void listFiles(const std::string& path, const std::string& ext, std::vector<std::string>& files);

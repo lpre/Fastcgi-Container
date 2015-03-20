@@ -66,6 +66,8 @@ public:
 
 	static void split(const std::string& str, char c, std::vector<std::string> &v);
 
+	static std::string error(int error);
+
 	static const std::string EMPTY_STRING;
 
 private:

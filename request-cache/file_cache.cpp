@@ -205,8 +205,7 @@ FileRequestCache::createHardLink(const std::string &key) {
 	std::string new_key = generateUniqueKey();
 	std::string new_path = cache_dir_ + new_key;
 	if (-1 == link(path.c_str(), new_path.c_str())) {
-		char buffer[256];
-		logger_->error("Cannot link file %s: %s", path.c_str(), strerror_r(errno, buffer, sizeof(buffer)));
+		logger_->error("Cannot link file %s: %s", path.c_str(), StringUtils::error(errno).c_str());
 		return StringUtils::EMPTY_STRING;
 	}
 	return new_key;

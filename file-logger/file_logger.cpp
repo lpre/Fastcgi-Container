@@ -116,7 +116,7 @@ void FileLogger::openFile() {
     }
     fd_ = open(filename_.c_str(), O_WRONLY | O_CREAT | O_APPEND, open_mode_);
     if (-1 == fd_) {
-    	std::cerr << "FileLogger: cannot open file \"" << filename_ << "\" for writing: " << strerror(errno) << std::endl;
+    	std::cerr << "FileLogger: cannot open file \"" << filename_ << "\" for writing: " << StringUtils::error(errno) << std::endl;
 		throw std::system_error(errno, std::system_category());
     }
 }
@@ -200,7 +200,7 @@ FileLogger::writingThread() {
                 while (wrote < i.length()) {
                 	int res = ::write(fd_, i.c_str() + wrote, i.length() - wrote);
                 	if (res < 0) {
-                		std::cerr << "FileLogger: failed to write to log \"" << filename_ << "\": " << strerror(errno) << std::endl;
+                		std::cerr << "FileLogger: failed to write to log \"" << filename_ << "\": " << StringUtils::error(errno) << std::endl;
                 		break;
                 	} else {
                 		wrote += res;
