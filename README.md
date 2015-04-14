@@ -6,7 +6,7 @@ Fastcgi Container is a branch of Yandex's [Fastcgi Daemon](<https://github.com/g
 
 What's new compared to Fastcgi Daemon:
 
-* The package is written in C++11 and does not depends on Boost libraries anymore 
+* The package is written in C++11 and does not depend on Boost libraries anymore 
 * Support of request filters
 * Support of servlets as an extensions of request handlers
 * Support of sessions
