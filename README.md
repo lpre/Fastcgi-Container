@@ -41,6 +41,10 @@ Note that security facility depends on session management: if you decide to use 
 
 # Build
 
+Make sure the MNMLSTC Core is available in your INCLUDE path. It should resolve properly the header files with prefix "core/" like:
+
+	#include "core/any.hpp"
+
 The project is using GNU Autotools. To build it, execute the following commands in the root directory of the project:
 
 	./autogen.sh
