@@ -17,7 +17,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Fastcgi Container. If not, see <http://www.gnu.org/licenses/>.
 
-#include "settings.h"
+// #include "settings.h"
 
 #include "details/response_time_statistics.h"
 

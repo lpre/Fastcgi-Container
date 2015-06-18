@@ -17,7 +17,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Fastcgi Container. If not, see <http://www.gnu.org/licenses/>.
 
-#include "settings.h"
+// #include "settings.h"
 
 #include <string>
 #include <fstream>
@@ -69,7 +69,7 @@ Config::create(int &argc, char *argv[], HelpFunc func) {
 	if (nullptr != func) {
 		func(stream);
 	} else {
-		stream << "usage: fastcgi-daemon --config=<config file>";
+		stream << "usage: fastcgi3-daemon --config=<config file>";
 	}
 	throw std::logic_error(stream.str());
 }

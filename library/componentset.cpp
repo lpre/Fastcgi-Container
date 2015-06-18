@@ -18,7 +18,7 @@
 // along with Fastcgi Container. If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "settings.h"
+// #include "settings.h"
 
 #include <iostream>
 #include <vector>

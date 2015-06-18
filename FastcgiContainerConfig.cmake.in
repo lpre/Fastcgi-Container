@@ -1,0 +1,33 @@
+# - Config file for the FooBar package
+# It defines the following variables
+#  FASTCGICONTAINER_INCLUDE_DIRS - include directories for FooBar
+#  FASTCGICONTAINER_LIBRARIES    - libraries to link against
+#  FASTCGICONTAINER_EXECUTABLE   - the bar executable
+ 
+# Compute paths
+get_filename_component(FASTCGICONTAINER_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(FASTCGICONTAINER_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+ 
+# Library dependencies (contains definitions for IMPORTED targets)
+if(
+	NOT TARGET fastcgi3-container 		AND
+	NOT TARGET fastcgi3-syslog			AND 
+	NOT TARGET fastcgi3-filelogger 		AND
+	NOT TARGET fastcgi3-statistics 		AND
+	NOT TARGET fastcgi3-request-cache 	AND
+	NOT TARGET fastcgi3-session-manager AND
+	NOT TARGET fastcgi3-authenticator	AND
+	NOT FastcgiContainer_BINARY_DIR
+)
+	include("${FASTCGICONTAINER_CMAKE_DIR}/FastcgiContainerTargets.cmake")
+endif()
+ 
+# These are IMPORTED targets created by FastcgiContainerTargets.cmake
+set(
+	FASTCGICONTAINER_LIBRARIES 
+	"fastcgi3-container fastcgi3-syslog fastcgi3-filelogger fastcgi3-statistics fastcgi3-request-cache fastcgi3-session-manager fastcgi3-authenticator"
+)
+set(
+	FASTCGICONTAINER_EXECUTABLE 
+	"fastcgi3-daemon fastcgi3-page-compiler"
+)

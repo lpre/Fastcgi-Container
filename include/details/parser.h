@@ -25,7 +25,7 @@
 #include <vector>
 #include <iosfwd>
 
-#include "settings.h"
+// // // #include "settings.h"
 #include "fastcgi3/util.h"
 #include "fastcgi3/range.h"
 #include "fastcgi3/functors.h"

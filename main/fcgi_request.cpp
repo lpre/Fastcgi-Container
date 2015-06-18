@@ -17,8 +17,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Fastcgi Container. If not, see <http://www.gnu.org/licenses/>.
 
-#include "settings.h"
-
 #include <cstring>
 #include <functional>
 
@@ -52,7 +50,7 @@ using ParamsPtr = Params*;
 namespace fastcgi
 {
 
-static const std::string DAEMON_STRING = "fastcgi-daemon";
+static const std::string DAEMON_STRING = "fastcgi3-daemon";
 
 FastcgiRequest::FastcgiRequest(std::shared_ptr<Request> request,
 		std::shared_ptr<Endpoint> endpoint,
