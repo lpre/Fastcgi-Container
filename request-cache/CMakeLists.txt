@@ -4,7 +4,6 @@ add_library(
     fastcgi3-request-cache 
     MODULE
     	file_cache.cpp
-    	file_cache.h
 )
 target_link_libraries(fastcgi3-request-cache fastcgi3-container)
 

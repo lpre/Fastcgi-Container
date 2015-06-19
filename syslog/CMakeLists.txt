@@ -4,7 +4,6 @@ add_library(
     fastcgi3-syslog 
     MODULE
     	syslog-logger.cpp
-    	syslog-logger.h
 )
 target_link_libraries(fastcgi3-syslog fastcgi3-container)
 

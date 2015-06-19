@@ -8,7 +8,7 @@ add_library(
 target_link_libraries(example fastcgi3-container)
 
 add_custom_command(
-    OUTPUT Login.h Login.cpp factory.cpp
+    OUTPUT Login.cpp factory.cpp
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/../page-compiler/fastcgi3-page-compiler -updateFactory=true -updateMakefile=false *.cpsp
 )
 add_library(
@@ -16,7 +16,6 @@ add_library(
     MODULE
     	factory.cpp
 	   	Login.cpp
-	   	Login.h
 )
 target_link_libraries(example-cpsp fastcgi3-container)
 add_dependencies(example-cpsp fastcgi3-page-compiler)

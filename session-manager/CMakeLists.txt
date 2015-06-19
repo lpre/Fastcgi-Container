@@ -4,7 +4,6 @@ add_library(
     fastcgi3-session-manager 
     MODULE
     	simple_session_manager.cpp
-    	simple_session_manager.h
 )
 target_link_libraries(fastcgi3-session-manager fastcgi3-container)
 

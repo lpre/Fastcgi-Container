@@ -6,9 +6,6 @@ add_executable(
     	fcgi_request.cpp  
     	fcgi_server.cpp
     	main.cpp
-    	endpoint.h  
-    	fcgi_request.h  
-    	fcgi_server.h
 )
 target_link_libraries(fastcgi3-daemon fastcgi3-container)
 SET_TARGET_PROPERTIES(fastcgi3-daemon PROPERTIES

@@ -7,10 +7,6 @@ add_executable(
 	    page.cpp  
 	    page_reader.cpp  
 	    utils.cpp
-	    code_writer.h  
-	    page.h  
-	    page_reader.h  
-	    utils.h
 )
 target_link_libraries(fastcgi3-page-compiler fastcgi3-container)
 SET_TARGET_PROPERTIES(fastcgi3-page-compiler PROPERTIES

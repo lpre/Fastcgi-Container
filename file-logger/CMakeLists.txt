@@ -4,7 +4,6 @@ add_library(
     fastcgi3-filelogger 
     MODULE
     	file_logger.cpp
-    	file_logger.h
 )
 target_link_libraries(fastcgi3-filelogger fastcgi3-container)
 
