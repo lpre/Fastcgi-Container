@@ -6,18 +6,18 @@ Fastcgi Container is a branch of Yandex's [Fastcgi Daemon](<https://github.com/g
 
 What's new compared to Fastcgi Daemon:
 
-* The package is written in C++11 and does not depend on Boost libraries anymore 
-* Support of request filters
-* Support of servlets as an extensions of request handlers
-* Support of sessions
-* Support of authentication and authorization
-* Support of security contexts   
+* The framework is written in C++11 and does not depend on Boost libraries anymore 
+* Support for request filters
+* Support for servlets as an extensions of request handlers
+* Support for sessions
+* Support for authentication and authorization
+* Support for security contexts   
 * The framework provides Page Compiler - a command-line C++ server page compiler which generates C++ servlets from [JSP-like](http://en.wikipedia.org/wiki/JavaServer_Pages) source files
 * The framework is using CMake as a build system  
 
 All filters (including authentication/authorization filter) are executed under the FastCGI role "RESPONDER" and do not require that the roles "FILTER" and/or "AUTHORIZER" are supported by FastCGI connector (e.g. corresponding modules for Apache HTTPD).
 
-Session manager and security facility (support of authentication and authorization) are implemented as an optional pluggable modules: you may load them to your application and use it, or run the application without these features. 
+Session manager and security facility (support for authentication and authorization) are implemented as an optional pluggable modules: you may load them to your application and use it, or run the application without these features. 
 
 Note that security facility depends on session management: if you decide to use authentication and authorization, you have to activate the session management as well.  
 
@@ -27,7 +27,7 @@ Note that security facility depends on session management: if you decide to use 
 
 # Requirements
 
-* A C++11 compliant compiler with complete support of C++11 regex (e.g., GCC 4.9 meets the minimum feature set required to build the package)
+* A C++11 compliant compiler with complete support for C++11 regex (e.g., GCC 4.9 meets the minimum feature set required to build the package)
 * CMake build system
 * Currently the framework can be built on Linux only
 
@@ -70,9 +70,13 @@ or
 
 	cmake -DCMAKE_INSTALL_PREFIX:PATH=~/bin/fastcgi-container .
 	make
-	make install 
+	make install go
 
-For more information see documentation available on official [CMake site](http://www.cmake.org/documentation/).
+For more information about CMake options see the documentation available on official [CMake site](http://www.cmake.org/documentation/).
+
+After installation of the package in system directories `/usr` or `/usr/local`, create the necessary links and cache for use by the run-time linker:
+
+	sudo ldconfig   
 
 # Docs
 
@@ -134,7 +138,7 @@ Start HTTPD server as appropriate (e.g. `sudo /etc/init.d/apache start`).
 Start Fastcgi Container with exmple configuration (here the container is started under the current user; in production start it as appropriate):
 
 	cd ~/tmp/fscgi
-	fastcgi3-container --config=./fastcgi.conf
+	fastcgi3-domain --config=./fastcgi.conf
  
 Open any web browser and type the following address in URL bar:
 
