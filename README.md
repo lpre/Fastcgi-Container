@@ -40,7 +40,6 @@ Note that security facility depends on session management: if you decide to use 
 * libcrypto
 * libuuid
 * libdl
-* CMake (used as a build system)
 
 # Build
 
