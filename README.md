@@ -41,6 +41,7 @@ Note that security facility depends on session management: if you decide to use 
 * libcrypto
 * libuuid
 * libdl
+* CMake (used as a build system)
 
 # Build
 
@@ -48,7 +49,9 @@ Make sure the MNMLSTC Core is available in your INCLUDE path (for example, in `/
 
 	#include "core/any.hpp"
 
-The project is using CMake as a build system. To build and install the package, execute the following commands in the root directory of the project:
+To build the project you will need to have CMake installed appropriately in your system. 
+
+Inside the project directory, execute the following commands to generate Makefiles, build, and install the Fastcgi Container:
 
 	cmake .
 	make
@@ -56,7 +59,7 @@ The project is using CMake as a build system. To build and install the package, 
 
 If your default compiler does not meet the minimum feature set required to build the package, you may specify alternative compiler as follows:  
 
-	CC=gcc-4.9 CXX=g++-4.9 cmake .
+	cmake -DCMAKE_C_COMPILER=gcc-4.9 -DCMAKE_CXX_COMPILER=g++-4.9 .
 	make
 	sudo make install 
 
