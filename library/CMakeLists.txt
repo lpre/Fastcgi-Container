@@ -40,7 +40,7 @@ add_library(
 )
 
 set_target_properties(fastcgi3-container PROPERTIES
-	LINK_FLAGS "-ldl -lfcgi -lfcgi++ -lssl -lcrypto"
+	LINK_FLAGS "-ldl -lfcgi -lfcgi++ -lcrypto"
 )
 
 file(

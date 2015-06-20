@@ -37,7 +37,6 @@ Note that security facility depends on session management: if you decide to use 
 * libfcgi
 * libfcgi++
 * libxml2
-* libssl
 * libcrypto
 * libuuid
 * libdl
@@ -59,7 +58,7 @@ Inside the project directory, execute the following commands to generate Makefil
 
 If your default compiler does not meet the minimum feature set required to build the package, you may specify alternative compiler as follows:  
 
-	cmake -DCMAKE_C_COMPILER=gcc-4.9 -DCMAKE_CXX_COMPILER=g++-4.9 .
+	cmake -DCMAKE_CXX_COMPILER=g++-4.9 .
 	make
 	sudo make install 
 
