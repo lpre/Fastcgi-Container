@@ -23,7 +23,7 @@ Note that security facility depends on session management: if you decide to use 
 
 # License 
 
-[GPL v.3.0](LICENSE)
+[LGPL v.3.0](LICENSE), except Page Compiler which is covered by [GPL v.3.0](page-compiler/LICENSE).
 
 # Requirements
 
