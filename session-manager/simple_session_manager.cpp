@@ -68,9 +68,7 @@ SimpleSessionManager::SimpleSessionManager(std::shared_ptr<ComponentContext> con
 			"/fastcgi[count(session)=1]/session[@attach=\"1\" or @attach=\"true\"]/crawlerUserAgents",
 			default_crawlers_agents);
 	try {
-		std::regex regex_(crawler_agents, std::regex_constants::basic);
-		// Replace default regexp
-		setCrawlerAgentsRegExp(crawler_agents);
+		crawler_agents_regexp_.assign(crawler_agents, std::regex_constants::ECMAScript|std::regex_constants::icase);
 	} catch (const std::regex_error& e) {
     	std::cerr << "SimpleSessionManager: invalid crawler agents RegExp: " << crawler_agents << std::endl;
 	}
@@ -82,6 +80,8 @@ SimpleSessionManager::~SimpleSessionManager() {
 
 void
 SimpleSessionManager::onLoad() {
+	std::cout << "onLoad SimpleSessionManager executed" << std::endl;
+
 	initTimeoutThread();
 
 	std::string loggerComponentName = context()->getConfig()->asString(context()->getComponentXPath() + "/logger");
@@ -97,16 +97,14 @@ SimpleSessionManager::onUnload() {
 	stop();
 }
 
-
 bool
 SimpleSessionManager::isBot(const Request* request) const {
 	const std::string& userAgent = request->getHeader("USER-AGENT");
-	if (!userAgent.empty() && std::regex_match (userAgent, crawler_agents_regexp_)) {
+	if (!userAgent.empty() && std::regex_match(userAgent, crawler_agents_regexp_)) {
 		return true;
 	}
 	return false;
 }
-
 
 std::string
 SimpleSessionManager::getNewId(Request* request) {
@@ -114,11 +112,6 @@ SimpleSessionManager::getNewId(Request* request) {
 		return SessionManager::getNewId(request);
 	}
 	return crawler_agent_session_id;
-}
-
-void
-SimpleSessionManager::setCrawlerAgentsRegExp(std::string crawler_agents) {
-	crawler_agents_regexp_ = std::regex(crawler_agents, std::regex_constants::ECMAScript|std::regex_constants::icase);
 }
 
 void

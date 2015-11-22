@@ -49,13 +49,6 @@ public:
 	virtual void onLoad() override;
 	virtual void onUnload() override;
 
-    /**
-     * Web crawlers can trigger the creation of many thousands of sessions as they crawl a site
-     * which may result in significant memory consumption. This SessionManager ensures that crawlers
-     * are associated with a single session - just like normal users - regardless of whether or
-     * not they provide a session token with their requests.
-     */
-    virtual void setCrawlerAgentsRegExp(std::string crawler_agents);
 	virtual void stop() override;
 
 	template<class T>
@@ -84,6 +77,13 @@ private:
     std::condition_variable condition_;
     std::unique_ptr<std::thread> timeout_thread_;
     std::chrono::minutes max_inactive_interval_;
+
+    /**
+     * Web crawlers can trigger the creation of many thousands of sessions as they crawl a site
+     * which may result in significant memory consumption. This SessionManager ensures that crawlers
+     * are associated with a single session - just like normal users - regardless of whether or
+     * not they provide a session token with their requests.
+     */
     std::regex crawler_agents_regexp_;
 
 	const Globals *globals_;

@@ -122,6 +122,8 @@ ExampleHandler::onUnload() {
 void
 ExampleHandler::handleRequest(fastcgi::Request *req, fastcgi::HandlerContext *handlerContext) {
 
+printf("1\n");
+
 	core::any param = handlerContext->getParam("testParam");
 	if (param.empty()) {
 		std::cout << "testParam not found" << std::endl;
@@ -133,9 +135,13 @@ ExampleHandler::handleRequest(fastcgi::Request *req, fastcgi::HandlerContext *ha
 		}
 	}
 
+printf("2\n");
+
 //	req->setContentType("text/plain");
 //	req->setContentType("text/html");
 	fastcgi::RequestStream stream(req);
+
+printf("3\n");
 
 	std::vector<std::string> names;
 	req->argNames(names);
@@ -151,22 +157,35 @@ ExampleHandler::handleRequest(fastcgi::Request *req, fastcgi::HandlerContext *ha
 		stream << "cookie " << i << " has value " << req->getCookie(i) << "\n";
 	}
 
+printf("4\n");
+
 	stream << "Remote User: " << req->getRemoteUser() << "\n";
+
+printf("5\n");
 
 	stream << "ExampleHandler: test ok 222\n";
 
+printf("6\n");
+
 	if (req->getSession()) {
+printf("7\n");
 		stream << "session_id=" << req->getSession()->getId() << "\n";
+
+printf("8\n");
 
 		if (req->hasArg("a1")) {
 			req->getSession()->setAttribute<std::string>("a1", req->getArg("a1"));
 		}
+printf("9\n");
+
 		if (req->getSession()->hasAttribute("a1")) {
 			stream << "session attribute a1=" << req->getSession()->getAttribute<std::string>("a1");
 		}
 	} else {
 		stream << "session is not supported in current configuration\n";
 	}
+
+printf("7\n");
 
 //	logger_->info("request processed");
 
@@ -180,7 +199,11 @@ R"html(
 
 	stream << html_source;
 
+printf("6\n");
+
 	req->setStatus(200);
+
+printf("7\n");
 
 	handlerContext->setParam("param1", std::string("hi!"));
 }

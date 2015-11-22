@@ -88,7 +88,7 @@ FormAuthenticator::FormAuthenticator(std::shared_ptr<fastcgi::ComponentContext> 
 
 	storeRequest_ = "true"==config->asString(componentXPath + "/store-request", "false");
 
-	securityCheckUrlRegex_ = std::regex("(action\\s*=\\s*[\"']?).*"+securityCheckUrl_.substr(1)+"\\b", std::regex_constants::ECMAScript|std::regex_constants::icase);
+	securityCheckUrlRegex_.assign("(action\\s*=\\s*[\"']?).*"+securityCheckUrl_.substr(1)+"\\b", std::regex_constants::ECMAScript|std::regex_constants::icase);
 }
 
 FormAuthenticator::~FormAuthenticator() {

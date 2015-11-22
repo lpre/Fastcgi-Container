@@ -44,6 +44,8 @@ public:
 	static std::string urldecode(DataBuffer data);
 	static std::string urldecode(const std::string &val);
 	
+	static std::string escapeXml(const std::string &data);
+
 	using NamedValue = std::pair<std::string, std::string>;
 	
 	static void parse(const Range &range, std::vector<NamedValue> &v);
