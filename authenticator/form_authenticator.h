@@ -36,6 +36,21 @@ class Request;
 namespace security
 {
 
+/**
+ * Form-based authentication is a term of art in the context of Web- and Internet-based online networked computer systems.
+ * In general, it refers to the notion of a user being presented with an editable "form" to fill in and submit in order
+ * to log into some system or service.
+ *
+ * The steps of the technique are:
+ *    1. An unauthenticated user agent requests a web page from a website, via the HTTP protocol.
+ *    2. The website returns an HTML web page to the unauthenticated user agent. The web page consists minimally of an
+ *       HTML-based web form which prompts the user for their username and password, along with a button labeled "login" or "submit".
+ *    3. The user fills in his username and password, and then presses the submit button.
+ *    4. The user agent sends the web form data (which includes the username and password) to the web server.
+ *    5. The website implementation, running on the web server, performs some verification and validation operations on the web-form data.
+ *       If successful, the website considers the user agent to be authenticated.
+ *
+ */
 class FormAuthenticator : virtual public AbstractAuthenticator {
 public:
 	static const std::string COMPONENT_NAME;
