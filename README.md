@@ -19,7 +19,7 @@ All filters (including authentication/authorization filter) are executed under t
 
 Session manager and security facility (support for authentication and authorization) are implemented as an optional pluggable modules: you may load them to your application and use it, or run the application without these features. 
 
-Note that security facility depends on session management: if you decide to use authentication and authorization, you have to activate the session management as well.  
+Note that form-based authentication depends on session management: if you decide to use form-based authentication, you have to activate the session management as well.  
 
 # License 
 
