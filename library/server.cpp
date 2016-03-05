@@ -60,7 +60,7 @@ Server::handleRequest(RequestTask task) {
 		if ((nullptr == handler || handler->handlers.empty()) && !filters.empty()) {
 			// Handler not found - let the filter(s) to be executed
 			// and then try to find the handler again
-			// Example: "athenticator"-filter may redirect the
+			// Example: "authenticator"-filter may redirect the
 			// request to undefined path (like "j_security_check") and
 			// after the login redirect back to the original path
 			handleRequestInternal(filters, task);
