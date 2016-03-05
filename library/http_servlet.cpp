@@ -131,46 +131,46 @@ Servlet::handleRequest(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<Htt
 			doTrace(httpReq, httpResp);
 			break;
 		default:
-			httpResp->sendError(501);
+			httpResp->sendError(405);
 		}
 	} else {
-		httpResp->sendError(501);
+		httpResp->sendError(405);
 	}
 }
 
 void
 Servlet::doHead(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
-	httpResp->sendError(501);
+	httpResp->sendError(405);
 }
 
 void
 Servlet::doGet(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
-	httpResp->sendError(501);
+	httpResp->sendError(405);
 }
 
 void
 Servlet::doPost(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
-	httpResp->sendError(501);
+	httpResp->sendError(405);
 }
 
 void
 Servlet::doPut(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
-	httpResp->sendError(501);
+	httpResp->sendError(405);
 }
 
 void
 Servlet::doDelete(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
-	httpResp->sendError(501);
+	httpResp->sendError(405);
 }
 
 void
 Servlet::doOptions(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
-	httpResp->sendError(501);
+	httpResp->sendError(405);
 }
 
 void
 Servlet::doTrace(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
-	httpResp->sendError(501);
+	httpResp->sendError(405);
 }
 
 } //namespace fastcgi
