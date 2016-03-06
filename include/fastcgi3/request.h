@@ -170,8 +170,17 @@ public:
 
 	void restore(DataBuffer buffer);
 
+	/**
+	 * Redirect the client back to referrer page.
+	 */
     void redirectBack();
+    /**
+     * Send the HTTP code 302 to the client, forsing it to redirect to other URL.
+     */
     void redirectToPath(const std::string &path);
+    /**
+     * Internally forward to other URL, without redirecting the client.
+     */
     void forwardToPath(const std::string &path);
 
     void setContentType(const std::string &type);
