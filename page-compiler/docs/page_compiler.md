@@ -12,7 +12,7 @@ This document is derived from documentation of <a href="http://pocoproject.org/d
     * [Expression](#5)
     * [Scriptlet](#6)
     * [Pre-Response Scriptlet](#7)
-    * [Include Directive](#8)
+    * [Include Directives](#8)
     * [C++ Header Include Directive](#9)
     * [C++ Implementation Include Directive](#10)
     * [Component Name Directive](#11)
@@ -172,11 +172,19 @@ Example:
     	}
 	%>
 
-### <a name="8">Include Directive</a>
+### <a name="8">Include Directives</a>
 
 Another CPSP file can be included into the current file using the Include Directive. 
 
 	<%@ include page="path" %>
+
+Another URL handler can be included into the current page using the Include Directive. 
+
+	<%@ include path="/url/path" %>
+
+Another component handler can be included into the current page using the Include Directive. 
+
+	<%@ include component="component_name" %>
 
 ###<a name="9">C++ Header Include Directive</a>
 
@@ -327,11 +335,11 @@ The following objects are available in the handler code.
 
 #### <a name="24">request</a>
 
-The HTTP request object - an instance of `std::shared_ptr<fastcgi::HttpRequest>`.
+The HTTP request object - raw pointer `fastcgi::HttpRequest*`.
 
 #### <a name="25">response</a>
 
-The HTTP response object - an instance of `std::shared_ptr<fastcgi::HttpResponse>`.
+The HTTP response object - raw pointer `fastcgi::HttpResponse*`.
 
 #### <a name="26">responseStream</a>
 

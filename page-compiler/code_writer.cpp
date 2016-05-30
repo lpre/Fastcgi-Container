@@ -143,7 +143,7 @@ CodeWriter::handlerClass(std::ostream& ostr, const std::string& base, const std:
 		ostr << "\t" << _class << "(" << ctorArg << ");\n";
 		ostr << "\n";
 	}
-	ostr << "\tvoid handleRequest(std::shared_ptr<fastcgi::HttpRequest> httpReq, std::shared_ptr<fastcgi::HttpResponse> httpResp) override;\n";
+	ostr << "\tvoid handleRequest(fastcgi::HttpRequest* request, fastcgi::HttpResponse* response) override;\n";
 
 	writeHandlerMembers(ostr);
 
@@ -188,6 +188,7 @@ CodeWriter::writeImplIncludes(std::ostream& ostr) {
 	ostr << "#include <stdexcept>\n";
 	ostr << "#include \"fastcgi3/logger.h\"\n";
 	ostr << "#include \"fastcgi3/config.h\"\n";
+	ostr << "#include \"fastcgi3/except.h\"\n";
 	ostr << "#include \"fastcgi3/stream.h\"\n";
 	ostr << "#include \"fastcgi3/handler.h\"\n";
 	ostr << "#include \"fastcgi3/request.h\"\n";
@@ -211,7 +212,7 @@ CodeWriter::writeConstructor(std::ostream& ostr) {
 
 void
 CodeWriter::writeHandler(std::ostream& ostr) {
-	ostr << "void\n" << _class << "::handleRequest(std::shared_ptr<fastcgi::HttpRequest> request, std::shared_ptr<fastcgi::HttpResponse> response) {\n";
+	ostr << "void\n" << _class << "::handleRequest(fastcgi::HttpRequest* request, fastcgi::HttpResponse* response) {\n";
 	writeResponse(ostr);
 	if (_page.hasAttribute("page.precondition")) {
 		ostr << "\tif (!(" << _page.getAttribute<std::string>("page.precondition") << ")) return;\n\n";

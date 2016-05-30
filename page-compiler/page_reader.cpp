@@ -292,6 +292,10 @@ void
 PageReader::handleAttribute(const std::string& name, const std::string& value) {
 	if (name == "include.page") {
 		include(value);
+	} else 	if (name == "include.path") {
+		_page.handler() << "\tresponse->includePath(\"" << value << "\");";
+	} else 	if (name == "include.component") {
+		_page.handler() << "\tresponse->includeComponent(\"" << value << "\");";
 	} else if (name == "header.include") {
 		_page.headerDecls() << "#include \"" << value << "\"\n";
 	} else if (name == "header.sinclude") {
