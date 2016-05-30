@@ -41,6 +41,7 @@ static const unsigned int HTTP_METHOD_PUT 		{4};
 static const unsigned int HTTP_METHOD_DELETE 	{5};
 static const unsigned int HTTP_METHOD_OPTIONS 	{6};
 static const unsigned int HTTP_METHOD_TRACE 	{7};
+static const unsigned int HTTP_METHOD_PATCH 	{8};
 
 static const std::map<std::string, unsigned int> http_methods_map {
 	{"HEAD", 	HTTP_METHOD_HEAD},
@@ -49,7 +50,8 @@ static const std::map<std::string, unsigned int> http_methods_map {
 	{"PUT", 	HTTP_METHOD_PUT},
 	{"DELETE", 	HTTP_METHOD_DELETE},
 	{"OPTIONS", HTTP_METHOD_OPTIONS},
-	{"TRACE", 	HTTP_METHOD_TRACE}
+	{"TRACE", 	HTTP_METHOD_TRACE},
+	{"PATCH", 	HTTP_METHOD_PATCH}
 };
 
 Servlet::Servlet(std::shared_ptr<fastcgi::ComponentContext> context)
@@ -101,6 +103,9 @@ Servlet::logger() const {
 
 void
 Servlet::handleRequest(fastcgi::Request *req, fastcgi::HandlerContext *handlerContext) {
+
+	// Function to obtain list of handlers/servlets by URL
+	// Used in function includePath within HttpResponse
 	auto handlers = [this](const std::string &uri) {
 		const HandlerSet::HandlerDescription* handler = globals_->handlers()->findURIHandler(uri);
 		if (nullptr == handler || handler->handlers.empty()) {
@@ -109,6 +114,8 @@ Servlet::handleRequest(fastcgi::Request *req, fastcgi::HandlerContext *handlerCo
 		return handler->handlers;
 	};
 
+	// Function to obtain handler/servlet by component name
+	// Used in function includeComponent within HttpResponse
 	auto component = [this](const std::string &name) {
 		std::shared_ptr<fastcgi::Component> component = context()->findComponent<fastcgi::Component>(name);
         if (!component) {
@@ -151,6 +158,9 @@ Servlet::handleRequest(HttpRequest *httpReq, HttpResponse *httpResp) {
 		case HTTP_METHOD_OPTIONS:
 			doOptions(httpReq, httpResp);
 			break;
+		case HTTP_METHOD_PATCH:
+			doPatch(httpReq, httpResp);
+			break;
 		case HTTP_METHOD_TRACE:
 			doTrace(httpReq, httpResp);
 			break;
@@ -191,10 +201,17 @@ Servlet::doDelete(HttpRequest *httpReq, HttpResponse *httpResp) {
 void
 Servlet::doOptions(HttpRequest *httpReq, HttpResponse *httpResp) {
 	httpResp->sendError(405);
+	// Example of implementation:
+	// httpResp->setHeader("Allow", "GET,POST,PUT,DELETE,OPTIONS");
 }
 
 void
 Servlet::doTrace(HttpRequest *httpReq, HttpResponse *httpResp) {
+	httpResp->sendError(405);
+}
+
+void
+Servlet::doPatch(HttpRequest *httpReq, HttpResponse *httpResp) {
 	httpResp->sendError(405);
 }
 

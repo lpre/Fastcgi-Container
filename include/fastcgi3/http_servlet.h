@@ -55,6 +55,7 @@ public:
 	virtual void doPut(HttpRequest* httpReq, HttpResponse* httpResp);
 	virtual void doDelete(HttpRequest* httpReq, HttpResponse* httpResp);
 	virtual void doOptions(HttpRequest* httpReq, HttpResponse* httpResp);
+	virtual void doPatch(HttpRequest* httpReq, HttpResponse* httpResp);
 	virtual void doTrace(HttpRequest* httpReq, HttpResponse* httpResp);
 
 protected:
