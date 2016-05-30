@@ -47,22 +47,22 @@ public:
 	const std::string getParam(const std::string& name);
 	const std::string getParam(const std::string& name, const std::string& defValue);
 
-	virtual void handleRequest(fastcgi::Request *req, fastcgi::HandlerContext *handlerContext) override;
-	virtual void handleRequest(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp);
-	virtual void doHead(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp);
-	virtual void doGet(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp);
-	virtual void doPost(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp);
-	virtual void doPut(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp);
-	virtual void doDelete(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp);
-	virtual void doOptions(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp);
-	virtual void doTrace(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp);
+	virtual void handleRequest(fastcgi::Request* req, fastcgi::HandlerContext* handlerContext) override;
+	virtual void handleRequest(HttpRequest* httpReq, HttpResponse* httpResp);
+	virtual void doHead(HttpRequest* httpReq, HttpResponse* httpResp);
+	virtual void doGet(HttpRequest* httpReq, HttpResponse* httpResp);
+	virtual void doPost(HttpRequest* httpReq, HttpResponse* httpResp);
+	virtual void doPut(HttpRequest* httpReq, HttpResponse* httpResp);
+	virtual void doDelete(HttpRequest* httpReq, HttpResponse* httpResp);
+	virtual void doOptions(HttpRequest* httpReq, HttpResponse* httpResp);
+	virtual void doTrace(HttpRequest* httpReq, HttpResponse* httpResp);
 
 protected:
 	virtual const Globals* globals() const;
 	virtual std::shared_ptr<Logger> logger() const;
 
 private:
-	const Globals *globals_;
+	const Globals* globals_;
 	std::shared_ptr<fastcgi::Logger> logger_;
 
 };

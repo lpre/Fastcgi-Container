@@ -556,6 +556,7 @@ Request::outputHeader(const std::string &name) const {
 
 void
 Request::redirectBack() {
+	// "Referer" is incorrectly written deliberately
     redirectToPath(getHeader("Referer"));
 }
 

@@ -59,25 +59,27 @@ public:
 
 using FastcgiGetFactoryMapFunction = fastcgi::FactoryMap* (*)();
 
+// For more information see https://gcc.gnu.org/wiki/Visibility
 #if __GNUC__ >= 4
-#	define FCGIDAEMON_DSO_GLOBALLY_VISIBLE \
-		__attribute__ ((visibility ("default")))
+#	define FCGIDAEMON_DSO_GLOBALLY_VISIBLE 		__attribute__ ((visibility ("default")))
+#	define FCGIDAEMON_DSO_GLOBALLY_INVISIBLE 	__attribute__ ((visibility ("hidden")))
 #else
 #	define FCGIDAEMON_DSO_GLOBALLY_VISIBLE
+#	define FCGIDAEMON_DSO_GLOBALLY_INVISIBLE
 #endif
 
-#define FCGIDAEMON_REGISTER_FACTORIES_BEGIN() \
-	extern "C" FCGIDAEMON_DSO_GLOBALLY_VISIBLE \
-	const fastcgi::FactoryMap* getFactoryMap() { \
+#define FCGIDAEMON_REGISTER_FACTORIES_BEGIN() 		\
+	extern "C" FCGIDAEMON_DSO_GLOBALLY_VISIBLE 		\
+	const fastcgi::FactoryMap* getFactoryMap() { 	\
 		static fastcgi::FactoryMap m;
 			        
-#define FCGIDAEMON_ADD_DEFAULT_FACTORY(name, Type) \
+#define FCGIDAEMON_ADD_DEFAULT_FACTORY(name, Type) 	\
 		m.insert(std::make_pair((name), new fastcgi::DefaultComponentFactory<Type>));
 
-#define FCGIDAEMON_ADD_FACTORY(name, factory) \
+#define FCGIDAEMON_ADD_FACTORY(name, factory) 		\
 		m.insert(std::make_pair((name), (factory)));
 
-#define FCGIDAEMON_REGISTER_FACTORIES_END() \
+#define FCGIDAEMON_REGISTER_FACTORIES_END() 		\
 	    return &m; \
 	}
 

@@ -58,7 +58,7 @@ public:
 	ExampleServlet(std::shared_ptr<fastcgi::ComponentContext> context);
 	virtual ~ExampleServlet();
 
-	void doGet(std::shared_ptr<fastcgi::HttpRequest> httpReq, std::shared_ptr<fastcgi::HttpResponse> httpResp);
+	void doGet(fastcgi::HttpRequest* httpReq, fastcgi::HttpResponse* httpResp);
 };
 
 
@@ -270,13 +270,17 @@ ExampleServlet::~ExampleServlet() {
 
 
 void
-ExampleServlet::doGet(std::shared_ptr<fastcgi::HttpRequest> httpReq, std::shared_ptr<fastcgi::HttpResponse> httpResp) {
+ExampleServlet::doGet(fastcgi::HttpRequest* httpReq, fastcgi::HttpResponse* httpResp) {
 
 printf("Handle example servlet\n");
 
 	fastcgi::HttpResponseStream stream(httpResp);
 
 	stream << "\ntest ok 33 (servlet)\n";
+
+//	httpResp->includeComponent("example");
+	httpResp->includePath("/test");
+
 }
 
 
@@ -303,7 +307,13 @@ void ExampleFilter::doFilter(fastcgi::Request *req, fastcgi::HandlerContext *con
 
 //	stream << "\nFilter : 1\n";
 
-	printf("Filter: 1 %s\n", req->getHeader("USER-AGENT").c_str());
+	printf("Filter: ScriptName=%s | QueryString=%s | PathInfo=%s | Url=%s | URI=%s | UserAgent=%s\n",
+			req->getScriptName().c_str(),
+			req->getQueryString().c_str(),
+			req->getPathInfo().c_str(),
+			req->getUrl().c_str(),
+			req->getURI().c_str(),
+			req->getHeader("USER-AGENT").c_str());
 
 
 	next(req, context);
@@ -416,5 +426,6 @@ FCGIDAEMON_ADD_DEFAULT_FACTORY("example3", ExampleServlet)
 FCGIDAEMON_ADD_DEFAULT_FACTORY("filter1", ExampleFilter)
 FCGIDAEMON_ADD_DEFAULT_FACTORY("example-realm", ExampleRealm)
 FCGIDAEMON_REGISTER_FACTORIES_END()
+
 
 } // namespace example

@@ -35,7 +35,7 @@ class HttpResponse;
 
 class HttpResponseStream : virtual public RequestStream {
 public:
-	HttpResponseStream(std::shared_ptr<HttpResponse> resp);
+	HttpResponseStream(HttpResponse *resp);
 	virtual ~HttpResponseStream();
 
 	HttpResponseStream(const HttpResponseStream&) = delete;
@@ -43,11 +43,15 @@ public:
 };
 
 class HttpResponse {
+public:
+	using HandlersFuncType = std::function<std::vector<std::shared_ptr<Handler>>(const std::string &)>;
+	using ComponentFuncType = std::function<std::shared_ptr<Handler>(const std::string &)>;
+
 private:
 	friend class HttpResponseStream;
 
 public:
-	HttpResponse(fastcgi::Request *req);
+	HttpResponse(fastcgi::Request *req, fastcgi::HandlerContext *handlerContext, HandlersFuncType handlers, ComponentFuncType component);
 	virtual ~HttpResponse() {}
 
 	HttpResponse(const HttpResponse&) = delete;
@@ -65,6 +69,8 @@ public:
     void redirectBack();
     void redirectToPath(const std::string &path);
     void forwardToPath(const std::string &path);
+    void includePath(const std::string &path);
+    void includeComponent(const std::string &name);
 
     void setContentType(const std::string &type);
     void setContentEncoding(const std::string &encoding);
@@ -72,6 +78,8 @@ public:
 private:
 	Request *req_;
 	HandlerContext *handlerContext_;
+	HandlersFuncType handlers_;
+	ComponentFuncType component_;
 };
 
 

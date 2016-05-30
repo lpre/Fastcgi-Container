@@ -65,6 +65,7 @@ public:
 	void init(const Config *config, const ComponentSet *componentSet);
 
 	const HandlerSet::HandlerDescription* findURIHandler(const Request *request) const;
+	const HandlerSet::HandlerDescription* findURIHandler(const std::string &uri) const;
 	void findPoolHandlers(const std::string &poolName, std::set<std::shared_ptr<Handler>> &handlers) const;
 	std::set<std::string> getPoolsNeeded() const;
 

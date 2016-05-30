@@ -30,8 +30,8 @@
 namespace fastcgi
 {
 
-HttpResponse::HttpResponse(fastcgi::Request *req)
-: req_(req) {
+HttpResponse::HttpResponse(fastcgi::Request *req, fastcgi::HandlerContext *handlerContext, HandlersFuncType handlers, ComponentFuncType component)
+: req_(req), handlerContext_(handlerContext), handlers_(handlers), component_(component) {
 }
 
 void
@@ -85,6 +85,23 @@ HttpResponse::forwardToPath(const std::string &path) {
 }
 
 void
+HttpResponse::includePath(const std::string &path) {
+	for (auto& i : handlers_(path)) {
+		if (req_->isProcessed()) {
+			break;
+		}
+		i->handleRequest(req_, handlerContext_);
+	}
+}
+
+void
+HttpResponse::includeComponent(const std::string &name) {
+	if (!req_->isProcessed()) {
+		component_(name)->handleRequest(req_, handlerContext_);
+	}
+}
+
+void
 HttpResponse::setContentType(const std::string &type) {
 	req_->setContentType(type);
 }
@@ -95,7 +112,7 @@ HttpResponse::setContentEncoding(const std::string &encoding) {
 }
 
 
-HttpResponseStream::HttpResponseStream(std::shared_ptr<HttpResponse> resp)
+HttpResponseStream::HttpResponseStream(HttpResponse *resp)
 : RequestStream(resp->req_) {
 }
 

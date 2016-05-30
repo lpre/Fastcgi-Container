@@ -67,14 +67,18 @@ UrlFilter::~UrlFilter() {
 
 bool
 UrlFilter::check(const Request *request) {
-	const std::string &script_name = request->getScriptName();
+	return checkUrl(request->getScriptName());
+}
+
+bool
+UrlFilter::checkUrl(const std::string &url) {
 	if (url_prefix_len_>0) {
-		std::size_t n = script_name.find(url_prefix_);
+		std::size_t n = url.find(url_prefix_);
 		if (0==n) {
-			return RegexFilter::check(script_name.substr(url_prefix_len_));
+			return RegexFilter::check(url.substr(url_prefix_len_));
 		}
 	}
-    return RegexFilter::check(script_name);
+    return RegexFilter::check(url);
 }
 
 HostFilter::HostFilter(const std::string &regex)

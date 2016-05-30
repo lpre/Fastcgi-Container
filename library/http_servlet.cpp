@@ -20,6 +20,7 @@
 
 #include "fastcgi3/component_factory.h"
 #include "fastcgi3/config.h"
+#include "fastcgi3/except.h"
 #include "fastcgi3/logger.h"
 #include "fastcgi3/util.h"
 #include "fastcgi3/http_request.h"
@@ -27,6 +28,7 @@
 #include "fastcgi3/http_servlet.h"
 #include "details/component_context.h"
 #include "details/server.h"
+#include "details/globals.h"
 
 
 namespace fastcgi
@@ -99,24 +101,46 @@ Servlet::logger() const {
 
 void
 Servlet::handleRequest(fastcgi::Request *req, fastcgi::HandlerContext *handlerContext) {
-	handleRequest(std::shared_ptr<HttpRequest>(new HttpRequest(req, handlerContext)), std::shared_ptr<HttpResponse>(new HttpResponse(req)));
+	auto handlers = [this](const std::string &uri) {
+		const HandlerSet::HandlerDescription* handler = globals_->handlers()->findURIHandler(uri);
+		if (nullptr == handler || handler->handlers.empty()) {
+			throw NotFound();
+		}
+		return handler->handlers;
+	};
+
+	auto component = [this](const std::string &name) {
+		std::shared_ptr<fastcgi::Component> component = context()->findComponent<fastcgi::Component>(name);
+        if (!component) {
+            throw std::runtime_error("Cannot find component: " + name);
+        }
+        std::shared_ptr<Handler> handler = std::dynamic_pointer_cast<Handler>(component);
+        if (!handler) {
+            throw std::runtime_error("Component " + name + " does not implement interface Handler");
+        }
+        return handler;
+	};
+
+	std::unique_ptr<HttpRequest> request(new HttpRequest(req, handlerContext));
+	std::unique_ptr<HttpResponse> response(new HttpResponse(req, handlerContext, handlers, component));
+	handleRequest(request.get(), response.get());
 }
 
 void
-Servlet::handleRequest(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
+Servlet::handleRequest(HttpRequest *httpReq, HttpResponse *httpResp) {
 	const std::string &method = httpReq->getRequestMethod();
 
 	auto it = http_methods_map.find(method);
 	if (it!=http_methods_map.end()) {
 		switch(it->second) {
-		case HTTP_METHOD_HEAD:
-			doHead(httpReq, httpResp);
-			break;
 		case HTTP_METHOD_GET:
 			doGet(httpReq, httpResp);
 			break;
 		case HTTP_METHOD_POST:
 			doPost(httpReq, httpResp);
+			break;
+		case HTTP_METHOD_HEAD:
+			doHead(httpReq, httpResp);
 			break;
 		case HTTP_METHOD_PUT:
 			doPut(httpReq, httpResp);
@@ -132,6 +156,7 @@ Servlet::handleRequest(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<Htt
 			break;
 		default:
 			httpResp->sendError(405);
+			break;
 		}
 	} else {
 		httpResp->sendError(405);
@@ -139,37 +164,37 @@ Servlet::handleRequest(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<Htt
 }
 
 void
-Servlet::doHead(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
+Servlet::doHead(HttpRequest *httpReq, HttpResponse *httpResp) {
 	httpResp->sendError(405);
 }
 
 void
-Servlet::doGet(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
+Servlet::doGet(HttpRequest *httpReq, HttpResponse *httpResp) {
 	httpResp->sendError(405);
 }
 
 void
-Servlet::doPost(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
+Servlet::doPost(HttpRequest *httpReq, HttpResponse *httpResp) {
 	httpResp->sendError(405);
 }
 
 void
-Servlet::doPut(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
+Servlet::doPut(HttpRequest *httpReq, HttpResponse *httpResp) {
 	httpResp->sendError(405);
 }
 
 void
-Servlet::doDelete(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
+Servlet::doDelete(HttpRequest *httpReq, HttpResponse *httpResp) {
 	httpResp->sendError(405);
 }
 
 void
-Servlet::doOptions(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
+Servlet::doOptions(HttpRequest *httpReq, HttpResponse *httpResp) {
 	httpResp->sendError(405);
 }
 
 void
-Servlet::doTrace(std::shared_ptr<HttpRequest> httpReq, std::shared_ptr<HttpResponse> httpResp) {
+Servlet::doTrace(HttpRequest *httpReq, HttpResponse *httpResp) {
 	httpResp->sendError(405);
 }
 

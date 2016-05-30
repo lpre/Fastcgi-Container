@@ -214,7 +214,7 @@ StringUtils::split(const std::string& str, char c, std::vector<std::string> &v) 
 
 std::string
 StringUtils::error(int error) {
-	char buffer[256];
+	char buffer[1024];
 	strerror_r(error, buffer, sizeof(buffer));
 	std::string result(buffer);
 	return result;

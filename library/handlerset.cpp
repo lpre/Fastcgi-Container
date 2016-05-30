@@ -236,6 +236,22 @@ HandlerSet::findURIHandler(const Request *request) const {
     return nullptr;
 }
 
+const HandlerSet::HandlerDescription*
+HandlerSet::findURIHandler(const std::string &uri) const {
+
+	// Find the single matching handler
+
+    for (auto &i : handlers_) {
+        bool matched = true;
+        for (auto &f : i.selectors) {
+            if (f.first == "url" && std::dynamic_pointer_cast<UrlFilter>(f.second)->checkUrl(uri)) {
+            	return &i;
+            }
+        }
+    }
+    return nullptr;
+}
+
 void
 HandlerSet::findURIFilters(const Request *request, std::vector<std::shared_ptr<Filter>> &v) const {
 

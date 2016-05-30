@@ -53,6 +53,7 @@ public:
     ~UrlFilter();
 
     virtual bool check(const Request *request) override;
+    bool checkUrl(const std::string &url);
 private:
     std::string url_prefix_;
     std::size_t url_prefix_len_;
