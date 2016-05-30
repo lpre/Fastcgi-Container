@@ -139,13 +139,13 @@ For more information, see Apache documentation:
 To run examples via Unix socket with NGINX server using module `ngx_http_fastcgi_module`, add the following entries into NGINX configuration file:
 
 	location /myapp/ {
-		fastcgi_pass	unix:/tmp/fastcgi3-container-example.sock;
-		include		fastcgi_params;
+		fastcgi_pass unix:/tmp/fastcgi3-container-example.sock;
+		include      fastcgi_params;
 	}
 
 You may also run examples in clustered environment.
 
-For more information, see HGINX doumentation:
+For more information, see NGINX doumentation:
 
 * [fastcgi_pass](http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html?#fastcgi_pass) 
 * [load balancer](http://nginx.org/en/docs/http/load_balancing.html)
