@@ -108,9 +108,11 @@ Copy built shared libraries from `example/.libs` as well as configuration file `
 
 Configure available HTTPD server to connect with Fastcgi Container. 
 
+### Apache 2 HTTPD
+
 For example, to run examples via Unix socket with Apache2 HTTPD using modules `mod_poxy` and `mod_proxy_fcgi`, add the following entries into Apache configuration file:
 
-	ProxyPass /myapp/ unix:///var/run/fastcgi3-container/example.sock|fcgi://localhost/
+	ProxyPass /myapp/ unix:///tmp/fastcgi3-container-example.sock|fcgi://localhost/
  
 To run examples via tcp socket, add the following entries into Apache configuration file:
 
@@ -131,6 +133,22 @@ For more information, see Apache documentation:
 * [mod_proxy](http://httpd.apache.org/docs/2.4/mod/mod_proxy.html)
 * [mod_proxy_fcgi](http://httpd.apache.org/docs/2.4/mod/mod_proxy_fcgi.html)
 * [mod_proxy_balancer](http://httpd.apache.org/docs/2.4/mod/mod_proxy_balancer.html)
+
+### NGINX
+
+To run examples via Unix socket with NGINX server using module `ngx_http_fastcgi_module`, add the following entries into NGINX configuration file:
+
+	location /myapp/ {
+		fastcgi_pass	unix:/tmp/fastcgi3-container-example.sock;
+		include		fastcgi_params;
+	}
+
+You may also run examples in clustered environment.
+
+For more information, see HGINX doumentation:
+
+* [fastcgi_pass](http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html?#fastcgi_pass) 
+* [load balancer](http://nginx.org/en/docs/http/load_balancing.html)
  
 ## Running examples
 
