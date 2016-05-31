@@ -31,6 +31,7 @@
 #include <libxml/xinclude.h>
 
 #include "fastcgi3/config.h"
+#include "fastcgi3/util.h"
 
 #include "details/config.h"
 
@@ -49,7 +50,7 @@ Config::~Config() {
 
 std::unique_ptr<Config>
 Config::create(const char *file) {
-	return std::unique_ptr<Config>(new XmlConfig(file));
+	return std::make_unique<XmlConfig>(file);
 }
 
 std::unique_ptr<Config>
@@ -58,7 +59,7 @@ Config::create(int &argc, char *argv[], HelpFunc func) {
 		if (strncmp(argv[i], "--config", sizeof("--config") - 1) == 0) {
 			const char *pos = strchr(argv[i], '=');
 			if (nullptr != pos) {
-				std::unique_ptr<Config> conf(new XmlConfig(pos + 1));
+				std::unique_ptr<Config> conf = std::make_unique<XmlConfig>(pos + 1);
 				std::swap(argv[i], argv[argc - 1]);
 				--argc;
 				return conf;

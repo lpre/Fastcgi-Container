@@ -159,7 +159,7 @@ SimpleSessionManager::createInternal(Request* request) {
 
 void
 SimpleSessionManager::initTimeoutThread() {
-	timeout_thread_.reset(new std::thread(&SimpleSessionManager::checkSessionTimeout, this));
+	timeout_thread_ = std::make_unique<std::thread>(&SimpleSessionManager::checkSessionTimeout, this);
 }
 
 void

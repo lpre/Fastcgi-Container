@@ -19,6 +19,31 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+#include <string>
+#include <vector>
+#include <memory>
+
+#if __cplusplus <= 201103L
+// C++14 defines std::make_unique<T> in <memory>
+// But current C++ compiler is not C++14
+namespace std
+{
+	template<typename T, typename ...Args>
+	unique_ptr<T> make_unique( Args&& ...args ) {
+		T* p = nullptr;
+		try {
+			p = new T(forward<Args>(args)...);
+			return unique_ptr<T>(p);
+		} catch (...) {
+			if (nullptr!=p) {
+				delete p;
+			}
+		}
+		return unique_ptr<T>();
+	}
+}
+#endif
+
 std::string basename(const std::string& path);
 
 std::string removeExtension(const std::string& filename);

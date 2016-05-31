@@ -28,6 +28,7 @@
 #include "fastcgi3/except.h"
 #include "fastcgi3/handler.h"
 #include "fastcgi3/logger.h"
+#include "fastcgi3/util.h"
 
 #include "fastcgi3/stream.h"
 
@@ -111,7 +112,7 @@ RequestsThreadPool::handleTask(RequestTask task) {
             fastcgi::RequestStream stream(task.request.get());
             stream.reset();
 
-            std::unique_ptr<HandlerContext> context(new HandlerContextImpl);
+            std::unique_ptr<HandlerContext> context = std::make_unique<HandlerContextImpl>();
             if (filters.size()>0) {
             	filters[0](task.request.get(), context.get());
             } else {

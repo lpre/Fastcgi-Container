@@ -259,7 +259,7 @@ FCGIServer::createWorkThreads() {
 	for (auto &endpoint : endpoints_) {
 		std::function<void()> f = std::bind(&FCGIServer::handle, this, endpoint);
 		for (unsigned short t=0, threads=endpoint->threads(); t<threads; ++t) {
-            globalPool_.push_back(std::unique_ptr<std::thread>(new std::thread(f)));
+            globalPool_.push_back(std::make_unique<std::thread>(f));
 		}
 	}
 }

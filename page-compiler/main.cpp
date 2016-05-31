@@ -78,7 +78,7 @@ write(const Page& page, const std::string& clazz) {
 	std::string headerPath = outputPath;
 	std::string headerFileName = headerPath + clazz + ".h";
 
-	std::unique_ptr<CodeWriter> codeWriter(new CodeWriter(page, clazz));
+	std::unique_ptr<CodeWriter> codeWriter = std::make_unique<CodeWriter>(page, clazz);
 
 	std::ofstream implStream(implFileName);
 	codeWriter->writeImpl(implStream, basename(headerFileName));
