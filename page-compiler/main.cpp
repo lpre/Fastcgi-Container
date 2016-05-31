@@ -43,7 +43,7 @@ void
 displayCopyright() {
 	printf(
 		"\nC++ Server Page Compiler for FastCGI Container.\n"
-		"Copyright (C) 2015 Alexander Ponomarenko.\n\n"
+		"Copyright (C) 2015,2016 Alexander Ponomarenko.\n\n"
 	);
 }
 
