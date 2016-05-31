@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU Lesser General Public License (LGPL)
 // along with Fastcgi Container. If not, see <http://www.gnu.org/licenses/>.
 
+#include <memory>
 #include <functional>
 
 #include "fastcgi3/component_factory.h"
@@ -29,7 +30,6 @@
 #include "details/component_context.h"
 #include "details/server.h"
 #include "details/globals.h"
-
 
 namespace fastcgi
 {
@@ -128,8 +128,8 @@ Servlet::handleRequest(fastcgi::Request *req, fastcgi::HandlerContext *handlerCo
         return handler;
 	};
 
-	std::unique_ptr<HttpRequest> request(new HttpRequest(req, handlerContext));
-	std::unique_ptr<HttpResponse> response(new HttpResponse(req, handlerContext, handlers, component));
+	std::unique_ptr<HttpRequest> request =  std::make_unique<HttpRequest>(req, handlerContext);
+	std::unique_ptr<HttpResponse> response = std::make_unique<HttpResponse>(req, handlerContext, handlers, component);
 	handleRequest(request.get(), response.get());
 }
 

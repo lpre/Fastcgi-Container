@@ -22,10 +22,23 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <sys/stat.h>
 
 #include "fastcgi3/data_buffer.h"
+
+#if __cplusplus <= 201103L
+// Not C++14
+// C++14 defines std::make_unique<T> in <memory>
+namespace std
+{
+	template<typename T, typename ...Args>
+	unique_ptr<T> make_unique( Args&& ...args ) {
+		return unique_ptr<T>( new T( forward<Args>(args)... ) );
+	}
+}
+#endif
 
 namespace fastcgi
 {
