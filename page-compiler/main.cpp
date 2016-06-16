@@ -38,6 +38,7 @@ std::string outputPath = "./";
 std::string moduleName = "server_pages";
 bool updateMakefile = false;
 bool updateFactory = false;
+bool verbose = false;
 
 void
 displayCopyright() {
@@ -93,6 +94,9 @@ write(const Page& page, const std::string& clazz) {
 
 void
 compile(const std::string& path) {
+	if (verbose) {
+		printf("\t%s\n", path.c_str());
+	}
 	Page page;
 	std::string clazz = parse(path, page);
 	write(page, clazz);
@@ -100,6 +104,9 @@ compile(const std::string& path) {
 
 void
 writeFactory() {
+	if (verbose) {
+		printf("Writing factory...\n");
+	}
 	std::ofstream factoryFileStream(outputPath+"factory.cpp");
 
 	factoryFileStream << "#include \"fastcgi3/component_factory.h\"\n";
@@ -113,6 +120,9 @@ writeFactory() {
 
 void
 writeMakeFile() {
+	if (verbose) {
+		printf("Writing makefile...\n");
+	}
 	std::ofstream makeFileStream(outputPath+"Makefile.am");
 
 	makeFileStream << "pkglib_LTLIBRARIES = " << moduleName << ".la\n\n";
@@ -185,7 +195,13 @@ main(int argc, char *argv[]) {
 					std::string value = p[1];
 					std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 					updateFactory = "yes"==value || "true"==value || "1"==value;
+
+				} else if ("v"==name || "verbose"==name) {
+					std::string value = p[1];
+					std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+					verbose = "yes"==value || "true"==value || "1"==value;
 				}
+
 			}
 
 		} else {
@@ -196,6 +212,8 @@ main(int argc, char *argv[]) {
 				updateMakefile = true;
 			} else if ("updatefactory"==name || "factory"==name) {
 				updateFactory = true;
+			} else if ("v"==name || "verbose"==name) {
+				verbose = true;
 			}
 
 		}
@@ -207,6 +225,9 @@ main(int argc, char *argv[]) {
 	}
 
 	try {
+		if (verbose) {
+			printf("Compiling pages...\n");
+		}
 		for (auto& page : pages) {
 			compile(page);
 		}
@@ -215,6 +236,9 @@ main(int argc, char *argv[]) {
 		}
 		if (updateMakefile) {
 			writeMakeFile();
+		}
+		if (verbose) {
+			printf("Done\n\n");
 		}
 		return EXIT_SUCCESS;
 	} catch (const std::exception &e) {
