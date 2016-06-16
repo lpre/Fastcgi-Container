@@ -80,10 +80,17 @@ replaceAll(std::string str, const std::string& toReplace, const std::string& rep
 
 std::string
 error(int error) {
-	char buffer[256];
-	strerror_r(error, buffer, sizeof(buffer));
-	std::string result(buffer);
-	return result;
+	std::error_condition econd = std::system_category().default_error_condition(error);
+	return econd.message();
+}
+
+bool
+doesDirectoryExist(const std::string& path) {
+	struct stat myStat;
+	if ((stat(path.c_str(), &myStat) == 0) && (((myStat.st_mode) & S_IFMT) == S_IFDIR)) {
+	    return true;
+	}
+	return false;
 }
 
 void
@@ -93,8 +100,15 @@ createDirectories(const std::string& path) {
 
 	std::string newFolder = "";
 	for (auto& dir : dirs) {
-		newFolder += "/"+dir;
-		if (0!=mkdir(newFolder.c_str(), S_IRUSR | S_IWUSR | S_IXUSR) && EEXIST!=errno) {
+		if (newFolder.empty() && path.at(0)!='/') {
+			newFolder += dir;
+		} else {
+			newFolder += "/"+dir;
+		}
+		if (doesDirectoryExist(newFolder)) {
+			continue;
+		}
+		if (0!=mkdir(newFolder.c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) && EEXIST!=errno) {
 			std::cerr << "Could not create directory \"" << path << "\": " << error(errno) << std::endl;
 			throw std::system_error(errno, std::system_category());
 		}
