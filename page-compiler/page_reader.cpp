@@ -22,6 +22,7 @@
 
 #include "page_reader.h"
 #include "page.h"
+#include "utils.h"
 
 const std::string PageReader::MARKUP_BEGIN("\tresponseStream << \"");
 const std::string PageReader::MARKUP_END("\";\n");
@@ -312,7 +313,7 @@ PageReader::handleAttribute(const std::string& name, const std::string& value) {
 
 void
 PageReader::include(const std::string& path) {
-	std::string includePath = _path + "/"+ path;
+	std::string includePath = pathToFile(_path) + "/"+ path;
 
 	_page.handler() << "\t// begin include " << includePath << "\n";
 
