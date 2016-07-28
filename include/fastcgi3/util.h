@@ -79,6 +79,8 @@ public:
 	    return std::equal(suffix.rbegin(), suffix.rend(), value.rbegin());
 	}
 
+	static std::string trim(const std::string &data, const std::string& space=" \t\r\n");
+
 	static void split(const std::string& str, char c, std::vector<std::string> &v);
 
 	static std::string error(int error);

@@ -197,6 +197,19 @@ StringUtils::escapeXml(const std::string &data) {
     return buffer;
 }
 
+std::string
+StringUtils::trim(const std::string &str, const std::string& space) {
+	std::string res = str;
+	if (res.length()>0) {
+		size_t pos=res.find_first_not_of(space);
+		res.erase(0,pos);
+
+		pos=res.find_last_not_of(space);
+		res.erase(++pos);
+	}
+	return res;
+}
+
 void
 StringUtils::split(const std::string& str, char c, std::vector<std::string> &v) {
 	const char *s = str.c_str();
