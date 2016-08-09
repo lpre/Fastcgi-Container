@@ -67,29 +67,41 @@ parse(const std::string& path, Page& page) {
 	PageReader pageReader(page, path);
 	pageReader.parse(srcStream);
 
-	std::string clazz = removeExtension(basename(path));
-	clazz[0] = std::toupper(clazz[0]);
-	return std::move(clazz);
+	if (page.hasAttribute("page.class")) {
+		return page.getAttribute<std::string>("page.class");
+	} else {
+		return "";
+	}
+
+//	std::string clazz = removeExtension(basename(path));
+//	clazz[0] = std::toupper(clazz[0]);
+//	return std::move(clazz);
 }
 
 void
 write(const Page& page, const std::string& clazz) {
-	std::string implFileName = outputPath + clazz + ".cpp";
+	if (!clazz.empty()) {
+		if (verbose) {
+			printf("\t\tgenerating class %s\n", clazz.c_str());
+		}
 
-	std::string headerPath = outputPath;
-	std::string headerFileName = headerPath + clazz + ".h";
+		std::string implFileName = outputPath + clazz + ".cpp";
 
-	std::unique_ptr<CodeWriter> codeWriter = std::make_unique<CodeWriter>(page, clazz);
+		std::string headerPath = outputPath;
+		std::string headerFileName = headerPath + clazz + ".h";
 
-	std::ofstream implStream(implFileName);
-	codeWriter->writeImpl(implStream, basename(headerFileName));
+		std::unique_ptr<CodeWriter> codeWriter = std::make_unique<CodeWriter>(page, clazz);
 
-	std::ofstream headerStream(headerFileName);
-	codeWriter->writeHeader(headerStream, headerFileName);
+		std::ofstream implStream(implFileName);
+		codeWriter->writeImpl(implStream, basename(headerFileName));
 
-	codeWriter->writeFactory(factoryIncStream, factoryStream, basename(headerFileName));
+		std::ofstream headerStream(headerFileName);
+		codeWriter->writeHeader(headerStream, headerFileName);
 
-	srcFiles.push_back(implFileName);
+		codeWriter->writeFactory(factoryIncStream, factoryStream, basename(headerFileName));
+
+		srcFiles.push_back(implFileName);
+	}
 }
 
 void
@@ -99,7 +111,13 @@ compile(const std::string& path) {
 	}
 	Page page;
 	std::string clazz = parse(path, page);
-	write(page, clazz);
+	if (!clazz.empty()) {
+		write(page, clazz);
+	} else {
+		if (verbose) {
+			printf("\t\t*** warning: skipping class generation!\n");
+		}
+	}
 }
 
 void

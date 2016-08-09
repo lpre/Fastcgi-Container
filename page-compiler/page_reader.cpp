@@ -306,11 +306,15 @@ PageReader::handleAttribute(const std::string& name, const std::string& value) {
 	} else if (name == "impl.sinclude") {
 		_page.implDecls() << "#include <" << value << ">\n";
 	} else {
-		std::string _class;
-		std::string componentName(_page.getAttribute<std::string>(name, _class));
-		if (componentName.empty()) {
+		if (!_page.hasAttribute(name)) {
 			_page.setAttribute<std::string>(name, value);
 		}
+
+//		std::string _class;
+//		std::string componentName(_page.getAttribute<std::string>(name, _class));
+//		if (componentName.empty()) {
+//			_page.setAttribute<std::string>(name, value);
+//		}
 	}
 }
 
