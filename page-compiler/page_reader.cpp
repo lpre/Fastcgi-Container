@@ -327,8 +327,15 @@ PageReader::include(const std::string& path) {
 
 	std::ifstream includeStream(includePath);
 
-	PageReader includeReader(*this, includePath);
-	includeReader.parse(includeStream);
+	if (includeStream.is_open()) {
+		PageReader includeReader(*this, includePath);
+		includeReader.parse(includeStream);
+		includeStream.close();
+	} else {
+		static char buf[1024];
+		sprintf(buf, "Error: could not open file %s for inclusion from %s!\n", includePath.substr(0, 400).c_str(), _path.substr(0, 400).c_str());
+		throw std::runtime_error(buf);
+	}
 
 	_page.handler() << "\t// end include " << includePath << "\n";
 }
