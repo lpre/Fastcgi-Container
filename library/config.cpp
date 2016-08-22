@@ -33,7 +33,7 @@
 #include "fastcgi3/config.h"
 #include "fastcgi3/util.h"
 
-#include "details/config.h"
+#include "fastcgi3/config.h"
 
 #ifdef HAVE_DMALLOC_H
 #include <dmalloc.h>
@@ -104,6 +104,21 @@ XmlConfig::XmlConfig(const char *file)
 		findVariables(doc_);
 	} catch (const std::ios::failure &e) {
 		throw std::runtime_error(std::string("can not read ").append(file));
+	}
+}
+
+XmlConfig::XmlConfig(const char *contents, unsigned int length)
+: doc_(nullptr), regex_("\\$\\{([A-Za-z][A-Za-z0-9\\-]*)\\}") {
+	try {
+		doc_ = XmlDocHelper(xmlParseMemory(contents, length));
+		XmlUtils::throwUnless(nullptr != doc_.get());
+		if (nullptr == xmlDocGetRootElement(doc_.get())) {
+			throw std::logic_error("got empty config");
+		}
+		XmlUtils::throwUnless(xmlXIncludeProcess(doc_.get()) >= 0);
+		findVariables(doc_);
+	} catch (const std::ios::failure &e) {
+		throw std::runtime_error(std::string("can not read XML from string"));
 	}
 }
 

@@ -26,6 +26,15 @@
 #include <memory>
 #include <iosfwd>
 
+#include <regex>
+#include <map>
+
+#include <libxml/tree.h>
+
+#include "fastcgi3/xml.h"
+#include "fastcgi3/config.h"
+#include "fastcgi3/helpers.h"
+
 namespace fastcgi
 {
 
@@ -57,6 +66,35 @@ protected:
 
 private:
 	std::string filename_;
+};
+
+class XmlConfig : public Config
+{
+public:
+	XmlConfig(const char *file);
+	XmlConfig(const char *contents, unsigned int length);
+	virtual ~XmlConfig();
+
+	XmlConfig(const Config&) = delete;
+	XmlConfig& operator=(const XmlConfig&) = delete;
+
+	virtual int asInt(const std::string &value) const;
+	virtual int asInt(const std::string &value, int defval) const;
+
+	virtual std::string asString(const std::string &value) const;
+	virtual std::string asString(const std::string &value, const std::string &defval) const;
+
+	virtual void subKeys(const std::string &value, std::vector<std::string> &v) const;
+
+private:
+	void findVariables(const XmlDocHelper &doc);
+	void resolveVariables(std::string &val) const;
+	const std::string& findVariable(const std::string &key) const;
+
+private:
+	XmlDocHelper doc_;
+	std::regex regex_;
+	std::map<std::string, std::string> vars_;
 };
 
 } // namespace fastcgi

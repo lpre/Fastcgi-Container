@@ -15,7 +15,7 @@ add_library(
     example-cpsp 
     MODULE
     	factory.cpp
-	   	Login.cpp
+	   	LoginForm.cpp
 )
 target_link_libraries(example-cpsp fastcgi3-container)
 add_dependencies(example-cpsp fastcgi3-page-compiler)

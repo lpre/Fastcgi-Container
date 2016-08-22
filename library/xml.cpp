@@ -22,7 +22,7 @@
 #include <stdexcept>
 #include <libxml/xmlerror.h>
 
-#include "details/xml.h"
+#include "fastcgi3/xml.h"
 
 #ifdef HAVE_DMALLOC_H
 #include <dmalloc.h>
