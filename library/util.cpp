@@ -20,6 +20,7 @@
 // #include "settings.h"
 
 #include <cstdlib>
+#include <cstdio>
 #include <stdexcept>
 #include <limits>
 
@@ -223,6 +224,21 @@ StringUtils::split(const std::string& str, char c, std::vector<std::string> &v) 
 		}
 		v.push_back(std::string(begin, s));
 	} while (0 != *s++);
+}
+
+std::string
+StringUtils::sprintf(const char* format, ...) {
+	std::string s;
+	char* buf = nullptr;
+
+	va_list argptr;
+	va_start(argptr, format);
+	vasprintf(&buf, format, argptr);
+
+	s.assign(buf);
+	free(buf);
+
+	return s;
 }
 
 std::string

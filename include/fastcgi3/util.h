@@ -47,6 +47,8 @@ class Range;
 
 class StringUtils {
 public:
+	static const std::string EMPTY_STRING;
+
 	StringUtils(const StringUtils&) = delete;
 	StringUtils& operator=(const StringUtils&) = delete;
 
@@ -60,7 +62,6 @@ public:
 	static std::string escapeXml(const std::string &data);
 
 	using NamedValue = std::pair<std::string, std::string>;
-	
 	static void parse(const Range &range, std::vector<NamedValue> &v);
 	static void parse(const std::string &str, std::vector<NamedValue> &v);
 	static void parse(DataBuffer data, std::vector<NamedValue> &v);
@@ -83,9 +84,9 @@ public:
 
 	static void split(const std::string& str, char c, std::vector<std::string> &v);
 
-	static std::string error(int error);
+	static std::string sprintf(const char* format, ...);
 
-	static const std::string EMPTY_STRING;
+	static std::string error(int error);
 
 private:
 	static void urldecode(const Range &range, std::string &result);
