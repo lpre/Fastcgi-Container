@@ -235,6 +235,66 @@ CodeWriter::writeFactory(std::ostream& istr, std::ostream& ostr, const std::stri
 }
 
 void
+CodeWriter::writeComponentsConfig(std::ostream& ostr, const std::string& moduleName, const std::string& loggerName) {
+	std::string componentName(_page.getAttribute<std::string>("component.name", _class));
+	if (!componentName.empty()) {
+		ostr << "\t<component name=\"" << componentName << "\" type=\"" << moduleName << ":" << componentName << "\">\n";
+		if (!loggerName.empty()) {
+			ostr << "\t\t<logger>" << loggerName << "</logger>\n";
+		}
+		ostr << "\t</component>\n";
+	}
+}
+
+void
+CodeWriter::writeHandlersConfig(std::ostream& ostr, const std::string& threadPoolName) {
+	std::string componentName(_page.getAttribute<std::string>("component.name", _class));
+	if (!componentName.empty()) {
+		std::stringstream sfilter;
+
+		std::string url(_page.getAttribute<std::string>("component.url", "/"+componentName));
+		if (!url.empty()) {
+			sfilter << "url=\"" << url << "\" ";
+		}
+
+		if (_page.hasAttribute("component.host")) {
+			std::string value(_page.getAttribute<std::string>("component.host"));
+			if (!value.empty()) {
+				sfilter << "host=\"" << value << "\" ";
+			}
+		}
+
+		if (_page.hasAttribute("component.port")) {
+			std::string value(_page.getAttribute<std::string>("component.port", "/"+componentName));
+			if (!value.empty()) {
+				sfilter << "port=\"" << value << "\" ";
+			}
+		}
+
+		if (_page.hasAttribute("component.address")) {
+			std::string value(_page.getAttribute<std::string>("component.address", "/"+componentName));
+			if (!value.empty()) {
+				sfilter << "address=\"" << value << "\" ";
+			}
+		}
+
+		if (_page.hasAttribute("component.referer")) {
+			std::string value(_page.getAttribute<std::string>("component.referer", "/"+componentName));
+			if (!value.empty()) {
+				sfilter << "referer=\"" << value << "\" ";
+			}
+		}
+
+		std::string filter = sfilter.str();
+		if (!filter.empty()) {
+			ostr << "\t<handler " << filter << " pool=\"" << threadPoolName << "\">\n";
+			ostr << "\t\t<component name=\"" << componentName << "\"/>\n";
+			ostr << "\t</handler>\n";
+		}
+	}
+}
+
+void
 CodeWriter::writeResponse(std::ostream& ostr) {
 	std::string contentType(_page.getAttribute<std::string>("page.contentType", "text/html"));
 	std::string contentLang(_page.getAttribute<std::string>("page.contentLanguage", ""));

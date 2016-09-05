@@ -42,6 +42,10 @@ public:
 
 	virtual void writeFactory(std::ostream& istr, std::ostream& ostr, const std::string& headerFileName);
 
+	virtual void writeComponentsConfig(std::ostream& ostr, const std::string& moduleName, const std::string& loggerName);
+
+	virtual void writeHandlersConfig(std::ostream& ostr, const std::string& threadPoolName);
+
 	/// Returns a const reference to the Page.
 	const Page& page() const;
 

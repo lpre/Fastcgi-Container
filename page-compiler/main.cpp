@@ -32,13 +32,21 @@
 
 std::stringstream factoryIncStream;
 std::stringstream factoryStream;
+
+std::stringstream componentsConfigStream;
+std::stringstream handlersConfigStream;
+
 std::vector<std::string> srcFiles;
 
 std::string outputPath = "./";
-std::string moduleName = "server_pages";
 bool updateMakefile = false;
 bool updateFactory = false;
+bool updateConfigFiles = false;
 bool verbose = false;
+
+std::string moduleName = "server_pages";
+std::string threadPoolName = "work_pool";
+std::string loggerName = "daemon-logger";
 
 void
 displayCopyright() {
@@ -54,6 +62,8 @@ displayHelp() {
 		"The following command line options are supported:\n"
 		"[-outputPath=<path>]\n"
 		"[-moduleName=<name>]\n"
+		"[-threadPoolName=<name>]\n"
+		"[-loggerName=<name>]\n"
 		"[-updateFactory=true|false]\n"
 		"[-updateMakefile=true|false]\n"
 		"<path>/*.cpsp\n"
@@ -100,6 +110,10 @@ write(const Page& page, const std::string& clazz) {
 
 		codeWriter->writeFactory(factoryIncStream, factoryStream, basename(headerFileName));
 
+		codeWriter->writeComponentsConfig(componentsConfigStream, moduleName, loggerName);
+
+		codeWriter->writeHandlersConfig(handlersConfigStream, threadPoolName);
+
 		srcFiles.push_back(implFileName);
 	}
 }
@@ -125,15 +139,49 @@ writeFactory() {
 	if (verbose) {
 		printf("Writing factory...\n");
 	}
-	std::ofstream factoryFileStream(outputPath+"factory.cpp");
 
-	factoryFileStream << "#include \"fastcgi3/component_factory.h\"\n";
-	factoryFileStream << factoryIncStream.str();
-	factoryFileStream << "\n";
+	std::ofstream includeFileStream(outputPath+"cpsp_pages.hpp");
 
-	factoryFileStream << "FCGIDAEMON_REGISTER_FACTORIES_BEGIN()\n";
+	includeFileStream << "// Automatically generated file: don't edit\n\n";
+
+	includeFileStream << "#ifndef INCLUDE_AUTO_CPSP_PAGES_HPP_\n";
+	includeFileStream << "#define INCLUDE_AUTO_CPSP_PAGES_HPP_\n";
+	includeFileStream << factoryIncStream.str();
+	includeFileStream << "#endif /* INCLUDE_AUTO_CPSP_PAGES_HPP_ */\n";
+
+
+	std::ofstream factoryFileStream(outputPath+"cpsp_factory.inc");
+
+	factoryFileStream << "// Automatically generated file: don't edit\n\n";
+
+//	factoryFileStream << "#include \"fastcgi3/component_factory.h\"\n";
+//	factoryFileStream << factoryIncStream.str();
+//	factoryFileStream << "\n";
+
+//	factoryFileStream << "FCGIDAEMON_REGISTER_FACTORIES_BEGIN()\n";
 	factoryFileStream << factoryStream.str();
-	factoryFileStream << "FCGIDAEMON_REGISTER_FACTORIES_END()\n\n";
+//	factoryFileStream << "FCGIDAEMON_REGISTER_FACTORIES_END()\n\n";
+}
+
+void
+writeConfigFiles() {
+	if (verbose) {
+		printf("Writing configuration files...\n");
+	}
+
+	std::ofstream componentsConfigFileStream(outputPath+"components.xml");
+	componentsConfigFileStream << "<?xml version=\"1.0\" ?>\n\n";
+	componentsConfigFileStream << "<!-- Automatically generated file: don't edit -->\n\n";
+	componentsConfigFileStream << "<components>\n";
+	componentsConfigFileStream << componentsConfigStream.str();
+	componentsConfigFileStream << "</components>\n";
+
+	std::ofstream handlersConfigFileStream(outputPath+"handlers.xml");
+	handlersConfigFileStream << "<?xml version=\"1.0\" ?>\n\n";
+	handlersConfigFileStream << "<!-- Automatically generated file: don't edit -->\n\n";
+	handlersConfigFileStream << "<handlers>\n";
+	handlersConfigFileStream << handlersConfigStream.str();
+	handlersConfigFileStream << "</handlers>\n";
 }
 
 void
@@ -204,6 +252,12 @@ main(int argc, char *argv[]) {
 				} else if ("modulename"==name) {
 					moduleName = p[1];
 
+				} else if ("threadpoolname"==name) {
+					threadPoolName = p[1];
+
+				} else if ("loggername"==name) {
+					loggerName = p[1];
+
 				} else if ("updatemakefile"==name || "makefile"==name) {
 					std::string value = p[1];
 					std::transform(value.begin(), value.end(), value.begin(), ::tolower);
@@ -213,6 +267,11 @@ main(int argc, char *argv[]) {
 					std::string value = p[1];
 					std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 					updateFactory = "yes"==value || "true"==value || "1"==value;
+
+				} else if ("updateconfig"==name || "config"==name) {
+					std::string value = p[1];
+					std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+					updateConfigFiles = "yes"==value || "true"==value || "1"==value;
 
 				} else if ("v"==name || "verbose"==name) {
 					std::string value = p[1];
@@ -230,6 +289,8 @@ main(int argc, char *argv[]) {
 				updateMakefile = true;
 			} else if ("updatefactory"==name || "factory"==name) {
 				updateFactory = true;
+			} else if ("updateconfig"==name || "config"==name) {
+				updateConfigFiles = true;
 			} else if ("v"==name || "verbose"==name) {
 				verbose = true;
 			}
@@ -251,6 +312,9 @@ main(int argc, char *argv[]) {
 		}
 		if (updateFactory) {
 			writeFactory();
+		}
+		if (updateConfigFiles) {
+			writeConfigFiles();
 		}
 		if (updateMakefile) {
 			writeMakeFile();
