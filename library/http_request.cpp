@@ -38,6 +38,11 @@ HttpRequest::HttpRequest(fastcgi::Request *req, fastcgi::HandlerContext *handler
 HttpRequest::~HttpRequest() {
 }
 
+const std::string&
+HttpRequest::getEnvVariable(const std::string &name) const {
+	return req_->getEnvVariable(name);
+}
+
 unsigned short
 HttpRequest::getServerPort() const {
 	return req_->getServerPort();

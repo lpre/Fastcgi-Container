@@ -41,6 +41,8 @@ public:
 	HttpRequest(const HttpRequest&) = delete;
 	HttpRequest& operator=(const HttpRequest&) = delete;
 
+	const std::string& getEnvVariable(const std::string &name) const;
+
     unsigned short getServerPort() const;
     const std::string& getHost() const;
     const std::string& getServerAddr() const;
