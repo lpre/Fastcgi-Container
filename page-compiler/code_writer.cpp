@@ -42,6 +42,8 @@ CodeWriter::writeHeader(std::ostream& ostr, const std::string& headerFileName) {
 	writeHeaderIncludes(ostr);
 	ostr << "\n\n";
 
+	ostr << "#define CPSP_CLASS_NAME " << _class << "\n\n";
+
 	std::string decls(_page.headerDecls().str());
 	if (!decls.empty()) {
 		ostr << decls << "\n\n";

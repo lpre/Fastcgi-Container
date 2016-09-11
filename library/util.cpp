@@ -213,6 +213,9 @@ StringUtils::trim(const std::string &str, const std::string& space) {
 
 void
 StringUtils::split(const std::string& str, char c, std::vector<std::string> &v) {
+	if (str.empty()) {
+		return;
+	}
 	const char *s = str.c_str();
 	do {
 		if (*s == c) {
