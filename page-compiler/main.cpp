@@ -37,6 +37,7 @@ std::stringstream componentsConfigStream;
 std::stringstream handlersConfigStream;
 
 std::vector<std::string> srcFiles;
+std::map<std::string, std::string> classes;
 
 std::string outputPath = "./";
 bool updateMakefile = false;
@@ -126,6 +127,11 @@ compile(const std::string& path) {
 	Page page;
 	std::string clazz = parse(path, page);
 	if (!clazz.empty()) {
+		if (classes.find(clazz)!=classes.end()) {
+			throw std::string("duplicate class name ")+clazz+std::string(" defined in file ")+path+std::string("; previously defined in ")+classes[clazz];
+		}
+		classes[clazz] = path;
+
 		write(page, clazz);
 	} else {
 		if (verbose) {
@@ -323,8 +329,11 @@ main(int argc, char *argv[]) {
 			printf("Done\n\n");
 		}
 		return EXIT_SUCCESS;
+	} catch (const std::string &s) {
+		fprintf (stderr, "Error: %s\n", s.c_str());
+		return EXIT_FAILURE;
 	} catch (const std::exception &e) {
-		std::cerr << e.what() << std::endl;
+		fprintf (stderr, "Error: %s\n", e.what());
 		return EXIT_FAILURE;
 	}
 }

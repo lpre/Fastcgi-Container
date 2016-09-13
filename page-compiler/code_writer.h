@@ -77,6 +77,9 @@ private:
 	std::string _class;
 
 	std::regex _removeEmptyString;
+
+	static std::map<std::string, std::string> _components;
+	static std::map<std::string, std::string> _filters;
 };
 
 

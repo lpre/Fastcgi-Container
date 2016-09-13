@@ -26,6 +26,9 @@
 #include "code_writer.h"
 #include "utils.h"
 
+std::map<std::string, std::string> CodeWriter::_components {};
+std::map<std::string, std::string> CodeWriter::_filters {};
+
 CodeWriter::CodeWriter(const Page& page, const std::string& clazz):
 	_page(page), _class(clazz),
 	_removeEmptyString("(\\s?responseStream << \"\";|\\s?responseStream << \"\\\\n\";)", std::regex_constants::ECMAScript|std::regex_constants::icase)
@@ -240,11 +243,18 @@ void
 CodeWriter::writeComponentsConfig(std::ostream& ostr, const std::string& moduleName, const std::string& loggerName) {
 	std::string componentName(_page.getAttribute<std::string>("component.name", _class));
 	if (!componentName.empty()) {
-		ostr << "\t<component name=\"" << componentName << "\" type=\"" << moduleName << ":" << componentName << "\">\n";
-		if (!loggerName.empty()) {
-			ostr << "\t\t<logger>" << loggerName << "</logger>\n";
+		std::string key = moduleName+":"+componentName;
+
+		if (_components.find(key)==_components.end()) {
+			ostr << "\t<component name=\"" << componentName << "\" type=\"" << moduleName << ":" << componentName << "\">\n";
+			if (!loggerName.empty()) {
+				ostr << "\t\t<logger>" << loggerName << "</logger>\n";
+			}
+			ostr << "\t</component>\n";
+			_components[key] = _class;
+		} else {
+			throw std::string("duplicate component name ")+key+std::string(" for class ")+_class+std::string("; previously defined for class ")+_components[key];
 		}
-		ostr << "\t</component>\n";
 	}
 }
 
@@ -289,9 +299,14 @@ CodeWriter::writeHandlersConfig(std::ostream& ostr, const std::string& threadPoo
 
 		std::string filter = sfilter.str();
 		if (!filter.empty()) {
-			ostr << "\t<handler " << filter << " pool=\"" << threadPoolName << "\">\n";
-			ostr << "\t\t<component name=\"" << componentName << "\"/>\n";
-			ostr << "\t</handler>\n";
+			if (_filters.find(filter)==_filters.end()) {
+				ostr << "\t<handler " << filter << " pool=\"" << threadPoolName << "\">\n";
+				ostr << "\t\t<component name=\"" << componentName << "\"/>\n";
+				ostr << "\t</handler>\n";
+				_filters[filter] = componentName;
+			} else {
+				throw std::string("duplicate filter ")+filter+std::string(" for component ")+componentName+std::string("; previously defined for component ")+_filters[filter];
+			}
 		}
 	}
 }

@@ -332,9 +332,11 @@ PageReader::include(const std::string& path) {
 		includeReader.parse(includeStream);
 		includeStream.close();
 	} else {
-		static char buf[1024];
-		sprintf(buf, "Error: could not open file %s for inclusion from %s!\n", includePath.substr(0, 400).c_str(), _path.substr(0, 400).c_str());
-		throw std::runtime_error(buf);
+//		static char buf[1024];
+//		sprintf(buf, "Error: could not open file %s for inclusion from %s!\n", includePath.substr(0, 400).c_str(), _path.substr(0, 400).c_str());
+//		throw std::runtime_error(buf);
+
+		throw std::string("could not open file  ")+includePath+std::string(" for inclusion ")+where();
 	}
 
 	_page.handler() << "\t// end include " << includePath << "\n";
