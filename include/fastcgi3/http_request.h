@@ -108,12 +108,17 @@ public:
 
 	template<class T> void
 	setAttribute(const std::string &name, T attr) {
-		handlerContext_->setAttribute<T>(name, attr);
+		T _value = attr;
+		setAttribute(name, (const core::any&)std::move(_value));
 	}
 
 	template<class T> T
 	getAttribute(const std::string &name) {
-		return handlerContext_->getAttribute<T>(name);
+		core::any attr = getAttribute(name);
+		if (!attr.empty()) {
+			return core::any_cast<T>(attr);
+		}
+		throw std::runtime_error("Attribute not found");
 	}
 
 	void setAttribute(const std::string &name, const core::any &value);
