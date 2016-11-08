@@ -386,7 +386,10 @@ UUIDUtils::getNewId() {
 	char uuid_str[37];
 	uuid_unparse_lower(u, uuid_str);
 
-	return std::string(uuid_str);
+	std::string id;
+	id.assign(uuid_str);
+
+	return id;
 }
 
 
