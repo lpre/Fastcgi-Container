@@ -29,6 +29,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include <pwd.h>
+
 #include "fcgi_server.h"
 #include "fastcgi3/config.h"
 #include "fastcgi3/util.h"
@@ -39,6 +41,23 @@
 #endif
 
 fastcgi::FCGIServer *server;
+
+uid_t
+name_to_uid(const char *name) {
+	if (!name) {
+		return -1;
+	}
+	long const buflen = sysconf(_SC_GETPW_R_SIZE_MAX);
+	if (buflen == -1) {
+		return -1;
+	}
+	char buf[buflen];
+	struct passwd pwbuf, *pwbufp;
+	if (0 != getpwnam_r(name, &pwbuf, buf, buflen, &pwbufp) || !pwbufp) {
+		return -1;
+	}
+	return pwbufp->pw_uid;
+}
 
 bool
 daemonize() {
@@ -147,9 +166,25 @@ int
 main(int argc, char *argv[]) {	
 	using namespace fastcgi;
 	try {
+		uid_t user = -1;
+		for (int i = 1; i < argc; ++i) {
+			if (!strcmp(argv[i], "--user") && ((i+1) < argc)) {
+				user = name_to_uid(argv[i+1]);
+				if (geteuid()!=user) {
+					if (seteuid(user)<0) {
+						printf("Could not change user to '%s'=%d\n", argv[i+1], user);
+						return EXIT_FAILURE;
+					}
+					printf("Changed user to '%s'=%d\n", argv[i+1], user);
+				}
+				break;
+			}
+		}
+
 		for (int i = 1; i < argc; ++i) {
 			if (!strcmp(argv[i], "--daemon")) {
 				if (!daemonize()) {
+					printf("Could not run as daemon\n");
 					return EXIT_FAILURE;
 				}
 				break;
