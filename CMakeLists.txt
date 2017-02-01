@@ -111,7 +111,7 @@ add_subdirectory(statistics)
 add_subdirectory(session-manager)
 add_subdirectory(authenticator)
 add_subdirectory(page-compiler)
-add_subdirectory(example)
+###add_subdirectory(example)
 ###add_subdirectory(logging)
 
 

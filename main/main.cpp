@@ -25,11 +25,14 @@
 #include <unistd.h>
 
 #include <errno.h>
+#include <syslog.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/resource.h>
 
 #include <pwd.h>
+#include <fcntl.h>
 
 #include "fcgi_server.h"
 #include "fastcgi3/config.h"
@@ -61,40 +64,12 @@ name_to_uid(const char *name) {
 
 bool
 daemonize() {
-	/*
-	 * Here are the steps to become a daemon:
-	 *
-	 * 1.	fork() so the parent can exit, this returns control to the command line or shell invoking your program.
-	 * 		This step is required so that the new process is guaranteed not to be a process group leader.
-	 * 		The next step, setsid(), fails if you're a process group leader.
-	 *
-	 * 2. 	setsid() to become a process group and session group leader.
-	 * 		Since a controlling terminal is associated with a session, and this new session has not yet acquired a controlling
-	 * 		terminal our process now has no controlling terminal, which is a Good Thing for daemons.
-	 *
-	 * 3.	fork() again so the parent, (the session group leader), can exit. This means that we, as a non-session group leader,
-	 * 		can never regain a controlling terminal.
-	 *
-	 * 4.	chdir("/") to ensure that our process doesn't keep any directory in use. Failure to do this could make it so that
-	 * 		an administrator couldn't unmount a filesystem, because it was our current directory.
-	 * 		[Equivalently, we could change to any directory containing files important to the daemon's operation.]
-	 *
-	 * 5.	umask(0) so that we have complete control over the permissions of anything we write. We don't know what umask we
-	 * 		may have inherited. [This step is optional]
-	 *
-	 * 6.	close() fds 0, 1, and 2. This releases the standard in, out, and error we inherited from our parent process.
-	 * 		We have no way of knowing where these fds might have been redirected to. Note that many daemons use sysconf() to
-	 * 		determine the limit _SC_OPEN_MAX. _SC_OPEN_MAX tells you the maximun open files/process. Then in a loop, the daemon
-	 * 		can close all possible file descriptors. You have to decide if you need to do this or not. If you think that there
-	 * 		might be file-descriptors open you should close them, since there's a limit on number of concurrent file descriptors.
-	 *
-	 * 7.	Establish new open descriptors for stdin, stdout and stderr. Even if you don't plan to use them, it is still a good idea
-	 * 		to have them open. The precise handling of these is a matter of taste; if you have a logfile, for example, you might wish
-	 * 		to open it as stdout or stderr, and open '/dev/null' as stdin; alternatively, you could open '/dev/console' as stderr and/or
-	 * 		stdout, and '/dev/null' as stdin, or any other combination that makes sense for your particular daemon.
-	 *
-	 * From http://web.archive.org/web/20120914180018/http://www.steve.org.uk/Reference/Unix/faq_2.html#SEC16
-	 */
+	printf("Starting Fastcgi-Container as a daemon\n");
+
+	struct rlimit rl;
+	if (getrlimit(RLIMIT_NOFILE, &rl) < 0) {
+		throw std::logic_error("Can’t get file limit");
+	}
 
 	pid_t pid = fork();
 	if (-1 == pid) {
@@ -123,25 +98,27 @@ daemonize() {
 		_exit(0); // exit session leader
 	}
 
-	for (int i = getdtablesize(); i--; ) {
+	if (rl.rlim_max == RLIM_INFINITY) {
+		rl.rlim_max = 1024;
+	}
+	for (int i=0; i<rl.rlim_max; ++i) {
 		close(i);
 	}
-	umask(0002); // disable: S_IWOTH
-	chdir("/");
 
-	const char *devnullptr = "/dev/nullptr";
-	stdin = fopen(devnullptr, "a+");
-	if (stdin == nullptr) {
+	chdir("/");
+	umask(0007);
+
+	int fd0 = open("/dev/null", O_RDWR);
+	int fd1 = dup(0);
+	int fd2 = dup(0);
+
+	openlog("fastcgi-container", LOG_CONS | LOG_PID, LOG_DAEMON);
+	if (fd0 != 0 || fd1 != 1 || fd2 != 2) {
+		syslog(LOG_ERR, "Unexpected file descriptors %d %d %d", fd0, fd1, fd2);
 		return false;
 	}
-	stdout = fopen(devnullptr, "w");
-	if (stdout == nullptr) {
-		return false;
-	}
-	stderr = fopen(devnullptr, "w");
-	if (stderr == nullptr) {
-		return false;
-	}
+
+	syslog(LOG_INFO, "Fastcgi-Container has been started as a daemon");
 	return true;
 }
 
