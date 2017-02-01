@@ -32,6 +32,7 @@
 #include <sys/resource.h>
 
 #include <pwd.h>
+#include <grp.h>
 #include <fcntl.h>
 
 #include "fcgi_server.h"
@@ -60,6 +61,23 @@ name_to_uid(const char *name) {
 		return -1;
 	}
 	return pwbufp->pw_uid;
+}
+
+gid_t
+name_to_gid(const char *name) {
+	if (!name) {
+		return -1;
+	}
+	long const buflen = sysconf(_SC_GETGR_R_SIZE_MAX);
+	if (buflen == -1) {
+		return -1;
+	}
+	char buf[buflen];
+	struct group grbuf, *grbufp;
+	if (0 != getgrnam_r(name, &grbuf, buf, buflen, &grbufp) || !grbufp) {
+		return -1;
+	}
+	return grbufp->gr_gid;
 }
 
 bool
@@ -143,6 +161,21 @@ int
 main(int argc, char *argv[]) {	
 	using namespace fastcgi;
 	try {
+		gid_t group = -1;
+		for (int i = 1; i < argc; ++i) {
+			if (!strcmp(argv[i], "--group") && ((i+1) < argc)) {
+				group = name_to_gid(argv[i+1]);
+				if (getegid()!=group) {
+					if (setegid(group)<0) {
+						printf("Could not change group to '%s'=%d\n", argv[i+1], group);
+						return EXIT_FAILURE;
+					}
+					printf("Changed group to '%s'=%d\n", argv[i+1], group);
+				}
+				break;
+			}
+		}
+
 		uid_t user = -1;
 		for (int i = 1; i < argc; ++i) {
 			if (!strcmp(argv[i], "--user") && ((i+1) < argc)) {
