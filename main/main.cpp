@@ -124,7 +124,7 @@ daemonize() {
 	}
 
 	chdir("/");
-	umask(0007);
+	umask(0002);
 
 	int fd0 = open("/dev/null", O_RDWR);
 	int fd1 = dup(0);
