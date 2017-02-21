@@ -100,6 +100,10 @@ public:
 	static time_t parse(const char *value);
 	static std::string format(time_t value);
 
+	// Returns time in seconds since epoch
+	static long getCurrentTime();
+	static std::string formatDateTime(long seconds, const std::string& format);
+
 	HttpDateUtils(const HttpDateUtils&) = delete;
 	HttpDateUtils& operator=(const HttpDateUtils&) = delete;
 

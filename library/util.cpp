@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <stdexcept>
 #include <limits>
+#include <chrono>
 
 #include <openssl/md5.h>
 #include <uuid/uuid.h>
@@ -30,6 +31,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <system_error>
+#include <time.h>
 
 #include "fastcgi3/util.h"
 #include "fastcgi3/logger.h"
@@ -286,6 +288,32 @@ HttpDateUtils::parse(const char *value) {
 	}
 	return static_cast<time_t>(0);
 }
+
+long
+HttpDateUtils::getCurrentTime() {
+	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+	auto tp = std::chrono::time_point_cast<std::chrono::seconds>(now);
+	auto value = tp.time_since_epoch();
+	return value.count();
+}
+
+std::string
+HttpDateUtils::formatDateTime(long seconds, const std::string& format) {
+	std::chrono::duration<long> dur(seconds);
+	std::chrono::system_clock::time_point tp(dur);
+	auto tt = std::chrono::system_clock::to_time_t(tp);
+	std::tm tm_info = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	gmtime_r(&tt, &tm_info);
+
+	char buffer[512];
+	int res = std::strftime(buffer, sizeof(buffer), format.c_str(), &tm_info);
+	if (0 != res) {
+		return std::move(std::string(buffer, buffer + res));
+	}
+
+	throw std::runtime_error("failed to format date");
+}
+
 
 std::string
 HashUtils::hexMD5(const char *key, unsigned long len) {
